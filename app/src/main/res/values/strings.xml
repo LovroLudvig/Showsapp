@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">ShowsApp</string>
+    <string name="back">back</string>
+    <string name="action_back">back</string>
+    <string name="action_add">add</string>
+    <string name="main_title">Shows</string>
 </resources>
