@@ -7,8 +7,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -30,11 +33,17 @@ class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  
 
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
-        TextView textView = holder.itemView.findViewById(R.id.episodeText);
+        TextView titleText = holder.itemView.findViewById(R.id.episodeText);
+        TextView episodeAndSeason= holder.itemView.findViewById(R.id.seasonAndEpisodeText);
+        ImageView episodeImage=holder.itemView.findViewById(R.id.episodePicture);
+
+
 
         final Episode episode = episodes.get(position);
 
-        textView.setText(episode.getName());
+        titleText.setText(episode.getName());
+        episodeAndSeason.setText("Season "+String.valueOf(episode.getSeasonNumber())+", Ep "+String.valueOf(episode.getEpisodeNumber()));
+        Glide.with(holder.itemView.getContext()).load(episode.getPicture()).into(episodeImage);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

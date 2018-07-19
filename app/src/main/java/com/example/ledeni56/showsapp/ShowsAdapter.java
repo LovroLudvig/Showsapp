@@ -45,10 +45,10 @@ class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
                     Intent i=new Intent(holder.itemView.getContext(), EpisodeSelectActivity.class);
 
                     ArrayList<Episode> episodes = show.getEpisodes();
-                    i.putParcelableArrayListExtra("Episodes", episodes);
+                    i.putParcelableArrayListExtra(EpisodeSelectActivity.EPISODES_LIST, episodes);
 
-                    i.putExtra("Name", show.getName());
-                    i.putExtra("Id", show.getID());
+                    i.putExtra(EpisodeSelectActivity.SHOW_NAME, show.getName());
+                    i.putExtra(EpisodeSelectActivity.SHOW_ID, show.getID());
 
                     holder.itemView.getContext().startActivity(i);
                 }

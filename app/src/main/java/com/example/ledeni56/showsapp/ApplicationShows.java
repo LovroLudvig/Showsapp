@@ -15,10 +15,6 @@ public class ApplicationShows {
         shows.add(new Show("Seks i grad"));
         shows.add(new Show("Vampirski dnevnici"));
 
-        //adding few episodes to "Zabranjena ljubav"
-        shows.get(0).addEpisode(new Episode("Episode 1", "Description 1"));
-        shows.get(0).addEpisode(new Episode("Episode 2", "Description 2"));
-        shows.get(0).addEpisode(new Episode("Episode 3", "Description 3"));
     }
 
     public static ArrayList<Show> getShows() {
@@ -35,12 +31,26 @@ public class ApplicationShows {
     }
 
     //never used but thought it might be useful at some point
-    public ArrayList<Episode> getEpisodesOfShow(int id){
+    public ArrayList<Episode> showEpisodes(int id){
         for (Show show:shows){
             if (show.getID()==id){
                 return show.getEpisodes();
             }
         }
         return new ArrayList<>();
+    }
+
+    //returns true if episode with "name" exists in show with id "id"
+    public static boolean nameExists(String name, int id) {
+        for (Show show:shows){
+            if (show.getID()==id){
+                for (Episode ep:show.getEpisodes()){
+                    if (ep.getName().equals(name)){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }
