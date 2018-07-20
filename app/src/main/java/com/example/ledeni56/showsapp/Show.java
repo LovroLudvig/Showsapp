@@ -19,7 +19,6 @@ public class Show {
     }
 
 
-
     public String getName() {
         return name;
     }
@@ -42,7 +41,7 @@ public class Show {
     }
 
 
-    //adds an episode if one doesn't already exist with the same name
+    //adds an episode if one doesn't already exist with the same episode number and season number
     public boolean addEpisode(Episode episode){
         if (episodes.contains(episode)){
             return false;

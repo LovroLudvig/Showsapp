@@ -2,6 +2,7 @@ package com.example.ledeni56.showsapp;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,10 @@ import java.util.ArrayList;
 
 public class EpisodeSelectActivity extends AppCompatActivity {
 
+    public static final String SHOW_NAME="ShowName";
+    public static final String SHOW_ID="ShowId";
+    public static final String EPISODES_LIST="EpisodesList";
+
     private ArrayList<Episode> episodesShowing;
     private RecyclerView recyclerView;
     private ImageView emptyImage;
@@ -30,8 +35,8 @@ public class EpisodeSelectActivity extends AppCompatActivity {
         setContentView(R.layout.activity_episode_select);
 
         Intent i=getIntent();
-        episodesShowing=i.getParcelableArrayListExtra("Episodes");
-        setMyActionBar(i.getStringExtra("Name"));
+        episodesShowing=i.getParcelableArrayListExtra(EPISODES_LIST);
+        setMyActionBar(i.getStringExtra(SHOW_NAME));
 
 
         recyclerView = findViewById(R.id.EpisodeRecyclerView);
@@ -81,7 +86,7 @@ public class EpisodeSelectActivity extends AppCompatActivity {
 
             case R.id.action_add:
                 Intent i=new Intent(EpisodeSelectActivity.this, AddEpisodeActivity.class);
-                i.putExtra("Id", getIntent().getIntExtra("Id",-1));
+                i.putExtra(SHOW_ID, getIntent().getIntExtra(SHOW_ID,-1));
                 startActivityForResult(i, 1);
                 return true;
 
@@ -97,8 +102,7 @@ public class EpisodeSelectActivity extends AppCompatActivity {
 
         if (requestCode == 1) {
             if(resultCode == Activity.RESULT_OK){
-                Episode ep=new Episode(data.getStringExtra("Name"), data.getStringExtra("Desc"));
-                episodesShowing.add(ep);
+                episodesShowing.add((Episode) data.getParcelableExtra(AddEpisodeActivity.EPISODE));
                 recyclerView.getAdapter().notifyItemInserted(episodesShowing.size()-1);
                 checkIfEpisodesEmpty();
             }
