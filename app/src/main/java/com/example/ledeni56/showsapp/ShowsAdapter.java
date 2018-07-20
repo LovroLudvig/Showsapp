@@ -17,11 +17,9 @@ import java.util.List;
 class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
 
         private final List<Show> shows;
-          private Context context;
 
-    public ShowsAdapter(List<Show> shows, Context context) {
+    public ShowsAdapter(List<Show> shows) {
             this.shows = shows;
-            this.context=context;
         }
 
         @NonNull
@@ -45,8 +43,8 @@ class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
                     Intent i=new Intent(holder.itemView.getContext(), EpisodeSelectActivity.class);
 
                     ArrayList<Episode> episodes = show.getEpisodes();
-                    i.putParcelableArrayListExtra(EpisodeSelectActivity.EPISODES_LIST, episodes);
 
+                    i.putParcelableArrayListExtra(EpisodeSelectActivity.EPISODES_LIST, episodes);
                     i.putExtra(EpisodeSelectActivity.SHOW_NAME, show.getName());
                     i.putExtra(EpisodeSelectActivity.SHOW_ID, show.getID());
 

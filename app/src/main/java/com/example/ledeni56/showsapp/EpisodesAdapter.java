@@ -17,11 +17,12 @@ import java.util.List;
 
 class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
     private final List<Episode> episodes;
-    private Context context;
+    private String showName;
 
-    public EpisodesAdapter(List<Episode> episodes, Context context) {
+    public EpisodesAdapter(List<Episode> episodes, String showName) {
         this.episodes = episodes;
-        this.context=context;
+
+        this.showName=showName;
     }
 
     @NonNull
@@ -48,7 +49,10 @@ class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(holder.itemView.getContext(), "Episode description: " +episode.getDescription(), Toast.LENGTH_SHORT).show();
+                Intent i=new Intent(holder.itemView.getContext(), EpisodeDetails.class);
+                i.putExtra(EpisodeDetails.EPISODE,episode);
+                i.putExtra(EpisodeDetails.SHOW_NAME, showName);
+                holder.itemView.getContext().startActivity(i);
             }
         });
     }

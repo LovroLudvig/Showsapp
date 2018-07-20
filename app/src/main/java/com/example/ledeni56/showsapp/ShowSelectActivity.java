@@ -36,7 +36,7 @@ public class ShowSelectActivity extends AppCompatActivity {
 
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new ShowsAdapter(shows, getApplicationContext()));
+        recyclerView.setAdapter(new ShowsAdapter(shows));
     }
 
     private void setMyActionBar() {
