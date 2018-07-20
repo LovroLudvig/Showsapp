@@ -22,6 +22,7 @@ public class EpisodeSelectActivity extends AppCompatActivity {
     public static final String SHOW_NAME="ShowName";
     public static final String SHOW_ID="ShowId";
     public static final String EPISODES_LIST="EpisodesList";
+    public static final int RESULT_CODE_EPISODE=1;
 
     private ArrayList<Episode> episodesShowing;
     private RecyclerView recyclerView;
@@ -46,18 +47,40 @@ public class EpisodeSelectActivity extends AppCompatActivity {
         checkIfEpisodesEmpty();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new EpisodesAdapter(episodesShowing, getApplicationContext()));
+        recyclerView.setAdapter(new EpisodesAdapter(episodesShowing, i.getStringExtra(SHOW_NAME)));
 
     }
 
     private void setMyActionBar(String showName) {
         Toolbar myToolbar = findViewById(R.id.episodeToolbar);
-        setSupportActionBar(myToolbar);
+        myToolbar.inflateMenu(R.menu.menu_episode);
+        myToolbar.setTitle(showName);
+        myToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_add:
+                        Intent i=new Intent(EpisodeSelectActivity.this, AddEpisodeActivity.class);
+                        i.putExtra(SHOW_ID, getIntent().getIntExtra(SHOW_ID,-1));
+                        startActivityForResult(i, RESULT_CODE_EPISODE);
+                        return true;
 
-        ActionBar ab = getSupportActionBar();
+                    default:
+                        // If we got here, the user's action was not recognized.
+                        // Invoke the superclass to handle it.
+                        return false;
+                }
+            }
+        });
+        myToolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
+        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
 
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle(showName);
+
     }
 
     private void checkIfEpisodesEmpty() {
@@ -73,34 +96,9 @@ public class EpisodeSelectActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_episode, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.home:
-                finish();
-                return true;
-
-            case R.id.action_add:
-                Intent i=new Intent(EpisodeSelectActivity.this, AddEpisodeActivity.class);
-                i.putExtra(SHOW_ID, getIntent().getIntExtra(SHOW_ID,-1));
-                startActivityForResult(i, 1);
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-
-        }
-    }
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if (requestCode == 1) {
+        if (requestCode == RESULT_CODE_EPISODE) {
             if(resultCode == Activity.RESULT_OK){
                 episodesShowing.add((Episode) data.getParcelableExtra(AddEpisodeActivity.EPISODE));
                 recyclerView.getAdapter().notifyItemInserted(episodesShowing.size()-1);

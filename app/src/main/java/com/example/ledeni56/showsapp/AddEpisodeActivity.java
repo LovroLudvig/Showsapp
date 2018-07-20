@@ -2,7 +2,9 @@ package com.example.ledeni56.showsapp;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -19,12 +21,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.NumberPicker;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.GlideBuilder;
 import com.bumptech.glide.load.model.GlideUrl;
+
+import static android.view.View.GONE;
 
 
 public class AddEpisodeActivity extends AppCompatActivity {
@@ -41,16 +46,15 @@ public class AddEpisodeActivity extends AppCompatActivity {
     private final int REQUEST_CODE_PERMISSION=3;
     private final int REQUEST_CODE_PICTURE=2;
 
-
-
     private int showId;
 
     private EditText episodeNameView;
     private EditText episodeDescriptionView;
     private TextView selectedEpisodeText;
     private Button saveButton;
-    private Button addPhotoButton;
+    private RelativeLayout addPhotoLayout;
     private ImageView episodePhoto;
+    private ImageView addPhotoIcon;
     private TextView addPhotoText;
 
     private int episodeNumber;
@@ -76,31 +80,16 @@ public class AddEpisodeActivity extends AppCompatActivity {
         episodeDescriptionView=findViewById(R.id.episodeDescription);
         saveButton=findViewById(R.id.saveButton);
         selectedEpisodeText=findViewById(R.id.selectedEpisode);
-        addPhotoButton=findViewById(R.id.addPhotoButton);
+        addPhotoLayout=findViewById(R.id.addPhotoLayout);
         episodePhoto=findViewById(R.id.episodeImage);
-        addPhotoText=findViewById(R.id.addphotoText);
+        addPhotoText=findViewById(R.id.addPhotoText);
+        addPhotoIcon=findViewById(R.id.addPhotoIcon);
 
         selectedEpisodeText.setText("Unknown");
 
-        if (savedInstanceState!=null){
-            episodeUriPicture=savedInstanceState.getParcelable(SAVE_URI);
-            episodeNameView.setText(savedInstanceState.getString(SAVE_TITLE));
-            episodeDescriptionView.setText(savedInstanceState.getString(SAVE_DESCRIPTION));
-            selectedEpisodeText.setText(savedInstanceState.getString(SAVE_SEASONANDEPISODE_TEXT));
+        restoreSavedInstance(savedInstanceState);
 
-            if (episodeUriPicture!=null){
-                addPhotoButton.setVisibility(View.GONE);
-                addPhotoText.setVisibility(View.GONE);
-                Glide.with(this).load(episodeUriPicture).into(episodePhoto);
-            }
-            if(!selectedEpisodeText.getText().toString().equals("Unknown")){
-                episodeNumber=savedInstanceState.getInt(SAVE_EPISODE_NUMBER);
-                seasonNumber=savedInstanceState.getInt(SAVE_SEASON_NUMBER);
-            }
-        }
-
-
-        addPhotoButton.setOnClickListener(new View.OnClickListener() {
+        addPhotoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(AddEpisodeActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -155,9 +144,8 @@ public class AddEpisodeActivity extends AppCompatActivity {
             if (resultCode==RESULT_OK){
                 Uri result=data.getData();
                 Glide.with(this).load(result).into(episodePhoto);
-                addPhotoButton.setVisibility(View.GONE);
-                addPhotoText.setVisibility(View.GONE);
-
+                addPhotoIcon.setVisibility(GONE);
+                addPhotoText.setVisibility(GONE);
                 episodeUriPicture=result;
             }
         }
@@ -200,23 +188,42 @@ public class AddEpisodeActivity extends AppCompatActivity {
 
     private void setMyActionBar() {
         Toolbar myToolbar = findViewById(R.id.addEpisodeToolbar);
-        setSupportActionBar(myToolbar);
-
-        ActionBar ab = getSupportActionBar();
-
-        ab.setDisplayHomeAsUpEnabled(true);
+        myToolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
+        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
     }
 
-
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
+    public void onBackPressed() {
+        if (checkGoingBack()){
             finish();
-            return true;
-        }else{
-            return super.onOptionsItemSelected(item);
+        } else{
+            AlertDialog alertDialog = new AlertDialog.Builder(AddEpisodeActivity.this).create();
+            alertDialog.setTitle("Warning");
+            alertDialog.setMessage("You have unsaved changes, are you sure you want to exit?");
+            alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                            finish();
+                        }
+                    });
+            alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            alertDialog.show();
         }
+    }
 
+    private boolean checkGoingBack() {
+        return episodeUriPicture==null && selectedEpisodeText.getText().toString().equals("Unknown") && episodeNameView.getText().toString().equals("") && episodeDescriptionView.getText().toString().equals("");
     }
 
 
@@ -252,10 +259,26 @@ public class AddEpisodeActivity extends AppCompatActivity {
 
 
     }
+    private void restoreSavedInstance(Bundle savedInstanceState) {
+        if (savedInstanceState!=null){
+            episodeUriPicture=savedInstanceState.getParcelable(SAVE_URI);
+            episodeNameView.setText(savedInstanceState.getString(SAVE_TITLE));
+            episodeDescriptionView.setText(savedInstanceState.getString(SAVE_DESCRIPTION));
+            selectedEpisodeText.setText(savedInstanceState.getString(SAVE_SEASONANDEPISODE_TEXT));
+
+            if (episodeUriPicture!=null){
+                Glide.with(this).load(episodeUriPicture).into(episodePhoto);
+            }
+            if(!selectedEpisodeText.getText().toString().equals("Unknown")){
+                episodeNumber=savedInstanceState.getInt(SAVE_EPISODE_NUMBER);
+                seasonNumber=savedInstanceState.getInt(SAVE_SEASON_NUMBER);
+            }
+        }
+    }
 
     @Override
-    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        super.onSaveInstanceState(outState, outPersistentState);
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putParcelable(SAVE_URI, episodeUriPicture);
         outState.putString(SAVE_TITLE, episodeNameView.getText().toString());
         outState.putString(SAVE_DESCRIPTION, episodeDescriptionView.getText().toString());
@@ -263,6 +286,5 @@ public class AddEpisodeActivity extends AppCompatActivity {
         outState.putInt(SAVE_SEASON_NUMBER,seasonNumber);
         outState.putString(SAVE_SEASONANDEPISODE_TEXT,selectedEpisodeText.getText().toString());
     }
-
 
 }
