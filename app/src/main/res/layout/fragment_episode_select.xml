@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="5dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    tools:context=".ShowSelectActivity"
+    android:background="#FFF7F9">
+
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/EpisodeRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+    <ImageView
+        android:id="@+id/noEpisodesImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerInParent="true"
+
+        android:src="@drawable/ic_empty_placeholder"
+
+        tools:src="@drawable/ic_empty_placeholder" />
+
+    <TextView
+        android:id="@+id/noEpisodesText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_below="@id/noEpisodesImage"
+        android:text="No Episode's to show"
+        android:textSize="20dp"
+
+        android:layout_centerInParent="true"/>
+
+
+
+
+
+</RelativeLayout>

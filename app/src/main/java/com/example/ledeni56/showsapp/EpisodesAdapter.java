@@ -18,11 +18,15 @@ import java.util.List;
 class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
     private final List<Episode> episodes;
     private String showName;
+    private Show show;
 
-    public EpisodesAdapter(List<Episode> episodes, String showName) {
-        this.episodes = episodes;
+    private EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener;
 
-        this.showName=showName;
+    public EpisodesAdapter(Show show, EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener) {
+        this.show=show;
+        this.episodes=show.getEpisodes();
+        this.showName=show.getName();
+        this.listener=listener;
     }
 
     @NonNull
@@ -46,13 +50,19 @@ class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  
         episodeAndSeason.setText("Season "+String.valueOf(episode.getSeasonNumber())+", Ep "+String.valueOf(episode.getEpisodeNumber()));
         Glide.with(holder.itemView.getContext()).load(episode.getPicture()).into(episodeImage);
 
+        if (episode.getPicture()==null){
+            episodeImage.setVisibility(View.GONE);
+        }
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(holder.itemView.getContext(), EpisodeDetails.class);
-                i.putExtra(EpisodeDetails.EPISODE,episode);
-                i.putExtra(EpisodeDetails.SHOW_NAME, showName);
-                holder.itemView.getContext().startActivity(i);
+                listener.onEpisodeSelected(episode);
+
+//                Intent i=new Intent(holder.itemView.getContext(), EpisodeDetails.class);
+//                i.putExtra(EpisodeDetails.EPISODE,episode);
+//                i.putExtra(EpisodeDetails.SHOW_NAME, showName);
+//                holder.itemView.getContext().startActivity(i);
             }
         });
     }

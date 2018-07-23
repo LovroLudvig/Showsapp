@@ -47,7 +47,7 @@ public class EpisodeSelectActivity extends AppCompatActivity {
         checkIfEpisodesEmpty();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new EpisodesAdapter(episodesShowing, i.getStringExtra(SHOW_NAME)));
+        //recyclerView.setAdapter(new EpisodesAdapter(episodesShowing, i.getStringExtra(SHOW_NAME)));
 
     }
 

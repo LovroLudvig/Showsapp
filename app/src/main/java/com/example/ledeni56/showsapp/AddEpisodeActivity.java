@@ -268,6 +268,8 @@ public class AddEpisodeActivity extends AppCompatActivity {
 
             if (episodeUriPicture!=null){
                 Glide.with(this).load(episodeUriPicture).into(episodePhoto);
+                addPhotoIcon.setVisibility(GONE);
+                addPhotoText.setVisibility(GONE);
             }
             if(!selectedEpisodeText.getText().toString().equals("Unknown")){
                 episodeNumber=savedInstanceState.getInt(SAVE_EPISODE_NUMBER);
