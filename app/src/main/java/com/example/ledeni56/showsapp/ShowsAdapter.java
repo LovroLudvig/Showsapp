@@ -48,16 +48,6 @@ class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 listener.onShowSelected(show.getID());
-//                    Intent i=new Intent(holder.itemView.getContext(), EpisodeSelectActivity.class);
-//
-//                    ArrayList<Episode> episodes = show.getEpisodes();
-//
-//                    i.putParcelableArrayListExtra(EpisodeSelectActivity.EPISODES_LIST, episodes);
-//                    i.putExtra(EpisodeSelectActivity.SHOW_NAME, show.getName());
-//                    i.putExtra(EpisodeSelectActivity.SHOW_ID, show.getID());
-//
-//                    holder.itemView.getContext().startActivity(i);
-
                 }
             });
         }

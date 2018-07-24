@@ -13,10 +13,11 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -52,8 +53,9 @@ public class AddEpisodeFragment extends Fragment {
     private Episode addedEpisode;
     private int episodeNumber;
     private int seasonNumber;
+    private ToolbarProvider listener;
+    private Toolbar toolbar;
 
-    private OnEpisodeAddFragmentInteractionListener listener;
 
     @Nullable
     @Override
@@ -67,7 +69,6 @@ public class AddEpisodeFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         show=ApplicationShows.getShow(showId);
-        //AddEpisodeFields.resetFields();
 
         episodeNameView=view.findViewById(R.id.episodeName);
         episodeDescriptionView=view.findViewById(R.id.episodeDescription);
@@ -79,13 +80,14 @@ public class AddEpisodeFragment extends Fragment {
         addPhotoIcon=view.findViewById(R.id.addPhotoIcon);
         episodePicker=view.findViewById(R.id.episodePicker);
 
-        selectedEpisodeText.setText("Unknown");
+        toolbar=listener.getToolbar();
+        setMyToolbar();
 
         addPhotoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION);
+                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION);
                 } else {
                     loadFromGallery();
                 }
@@ -97,7 +99,8 @@ public class AddEpisodeFragment extends Fragment {
             public void onClick(View v) {
                 if (checkFields()){
                     if (addEpisode()){
-                        listener.onEpisodeAdded(showId);
+                        hideKeyboardFrom(getContext(),getView());
+                        getFragmentManager().popBackStack();
                     }
                 }
             }
@@ -136,6 +139,21 @@ public class AddEpisodeFragment extends Fragment {
             }
         });
 
+    }
+
+    private void setMyToolbar() {
+        toolbar=listener.getToolbar();
+        toolbar.getMenu().clear();
+        toolbar.setTitle(show.getName());
+        toolbar.inflateMenu(R.menu.menu_episode);
+        toolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+        toolbar.getMenu().findItem(R.id.action_add).setVisible(false);
     }
 
     private boolean addEpisode() {
@@ -220,14 +238,15 @@ public class AddEpisodeFragment extends Fragment {
             showId = getArguments().getInt(ARG_NUMBER);
         }
     }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnEpisodeAddFragmentInteractionListener) {
-            listener = (OnEpisodeAddFragmentInteractionListener) context;
+        if (context instanceof ToolbarProvider) {
+            listener = (ToolbarProvider) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnShowFragmentInteractionListener");
+                    + " must implement ToolbarProvider");
         }
     }
 
@@ -240,9 +259,14 @@ public class AddEpisodeFragment extends Fragment {
         return bun;
     }
 
-    public interface OnEpisodeAddFragmentInteractionListener {
-        public void onEpisodeAdded(int showId);
+    public static void hideKeyboardFrom(Context context, View view) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        toolbar.getMenu().findItem(R.id.action_add).setVisible(true);
+    }
 }

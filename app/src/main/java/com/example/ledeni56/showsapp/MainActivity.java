@@ -1,5 +1,6 @@
 package com.example.ledeni56.showsapp;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -9,144 +10,47 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 
-public class MainActivity extends FragmentActivity implements ShowSelectFragment.OnShowFragmentInteractionListener, AddEpisodeFragment.OnEpisodeAddFragmentInteractionListener,EpisodeSelectFragment.OnEpisodeFragmentInteractionListener{
+public class MainActivity extends FragmentActivity implements ToolbarProvider{
     private Toolbar myToolbar;
-    private Show currentShow;
     private FragmentManager fragmentManager;
-
-    public static boolean closeDialog=false;
-
+    private static boolean closeDialog=false;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_layout);
         fragmentManager = getSupportFragmentManager();
-
-        if(savedInstanceState!=null){
-            Fragment frag=fragmentManager.findFragmentByTag(topFragmentName().toUpperCase());
-            if(findViewById(R.id.frameLayoutRight)==null){
-                fragmentManager.beginTransaction().replace(R.id.frameLayoutLeft,frag,topFragmentName().toUpperCase()).commit();
-                return;
-            }else{
-                if(topFragmentName().equals("root()=")){
-                    return;
-                }else{
-                    fragmentManager.beginTransaction().replace(R.id.frameLayoutLeft,new ShowSelectFragment(),"ROOT()=").commit();
-                    fragmentManager.beginTransaction().replace(R.id.frameLayoutRight,frag,topFragmentName().toUpperCase()).commit();
-                }
-            }
-        }
         setMyActionBar();
 
-        ShowSelectFragment showSelectFragment = new ShowSelectFragment();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frameLayoutLeft,showSelectFragment,"ROOT()=").addToBackStack("root()=");
-
-        fragmentTransaction.commit();
-
-    }
-
-    public String topFragmentName(){
-        String fragmentTag = fragmentManager.getBackStackEntryAt(fragmentManager.getBackStackEntryCount() - 1).getName();
-        return fragmentTag;
+        if (fragmentManager.findFragmentById(R.id.frameLayoutLeft)==null){
+            ShowSelectFragment showSelectFragment = new ShowSelectFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.frameLayoutLeft,showSelectFragment);
+            fragmentTransaction.commit();
+        }
     }
 
     private void setMyActionBar() {
         myToolbar = findViewById(R.id.Toolbar);
-        myToolbar.inflateMenu(R.menu.menu_episode);
-        Menu menu=myToolbar.getMenu();
-        menu.findItem(R.id.action_add).setVisible(false);
-        myToolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.action_add:
-                        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                        int containerViewId = R.id.frameLayoutLeft;
-
-                        if(findViewById(R.id.frameLayoutRight)!=null){
-                            containerViewId = R.id.frameLayoutRight;
-                        }
-                        AddEpisodeFragment addEpisodeFragment=AddEpisodeFragment.newInstance(currentShow.getID());
-                        fragmentTransaction.setCustomAnimations(R.anim.enter_up,R.anim.exit_up,R.anim.enter_up,R.anim.exit_up).replace(containerViewId,addEpisodeFragment,("add()="+currentShow.getName()).toUpperCase()).addToBackStack("add()="+currentShow.getName());
-                        fragmentTransaction.commit();
-                        myToolbar.getMenu().findItem(R.id.action_add).setVisible(false);
-
-                        return true;
-
-                    default:
-                        // If we got here, the user's action was not recognized.
-                        // Invoke the superclass to handle it.
-                        return false;
-                }
-            }
-        });
-        myToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-    }
-
-    @Override
-    public void onShowSelected(int showId) {
-        currentShow=ApplicationShows.getShow(showId);
-        if(!topFragmentName().equals("root()=")) {
-            if(topFragmentName().startsWith("add()=")){
-                fragmentManager.popBackStack();
-            }
-            fragmentManager.popBackStack();
-        }
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        int containerViewId = R.id.frameLayoutLeft;
-
-        if(findViewById(R.id.frameLayoutRight)!=null) {
-            containerViewId = R.id.frameLayoutRight;
-        }
-        EpisodeSelectFragment episodeSelectFragment = EpisodeSelectFragment.newInstance(showId);
-        fragmentTransaction.setCustomAnimations(R.anim.enter,R.anim.exit,R.anim.enter,R.anim.exit).replace(containerViewId,episodeSelectFragment,currentShow.getName().toUpperCase()).addToBackStack(currentShow.getName());
-
-        fragmentTransaction.commit();
-        myToolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
-        myToolbar.setTitle(currentShow.getName());
-        myToolbar.getMenu().findItem(R.id.action_add).setVisible(true);
-
-    }
-
-    private void setNavigationButton() {
-        if (!topFragmentName().equals("root()=")){
-            myToolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
-            myToolbar.setTitle(currentShow.getName());
-            myToolbar.getMenu().findItem(R.id.action_add).setVisible(true);
-        }else{
-            myToolbar.setNavigationIcon(null);
-            myToolbar.setTitle("Shows");
-            myToolbar.getMenu().findItem(R.id.action_add).setVisible(false);
-        }
+        myToolbar.getMenu().clear();
+        myToolbar.setNavigationIcon(null);
+        myToolbar.setTitle("Shows");
     }
 
     @Override
     public void onBackPressed() {
-        if (topFragmentName().equals("root()=")){
-            finish();
-            return;
-        }else if(closeDialog){
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        Fragment frag=fragmentManager.findFragmentById(R.id.frameLayoutRight);
+        if(closeDialog){
             closeDialog=false;
             super.onBackPressed();
-            setNavigationButton();
-        }
-        else if (topFragmentName().startsWith("add()=")){
-            AddEpisodeFragment frag=(AddEpisodeFragment) fragmentManager.findFragmentByTag(topFragmentName().toUpperCase());
-            if (checkIfCanExit(frag)){
+        }else if (frag instanceof AddEpisodeFragment){
+            AddEpisodeFragment fragment=(AddEpisodeFragment) frag;
+            if (checkIfCanExit(fragment)){
                 super.onBackPressed();
-                setNavigationButton();
             }else{
                 AlertDialog alertDialog = new AlertDialog.Builder(this).create();
                 alertDialog.setTitle("Warning");
@@ -169,7 +73,6 @@ public class MainActivity extends FragmentActivity implements ShowSelectFragment
             }
         } else{
             super.onBackPressed();
-            setNavigationButton();
         }
 
     }
@@ -180,23 +83,7 @@ public class MainActivity extends FragmentActivity implements ShowSelectFragment
     }
 
     @Override
-    public void onEpisodeAdded(int showId) {
-        onShowSelected(showId);
-    }
-
-    @Override
-    public void onEpisodeSelected(Episode episode) {
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-        int containerViewId = R.id.frameLayoutLeft;
-
-        if(findViewById(R.id.frameLayoutRight)!=null) {
-            containerViewId = R.id.frameLayoutRight;
-        }
-        EpisodeDetailsFragment episodeSelectFragment = EpisodeDetailsFragment.newInstance(episode);
-        fragmentTransaction.setCustomAnimations(R.anim.enter_down,R.anim.exit_down,R.anim.enter_down,R.anim.exit_down).replace(containerViewId,episodeSelectFragment,episode.getName().toUpperCase()).addToBackStack(episode.getName());
-
-        fragmentTransaction.commit();
-        myToolbar.getMenu().findItem(R.id.action_add).setVisible(false);
+    public Toolbar getToolbar() {
+        return findViewById(R.id.Toolbar);
     }
 }

@@ -58,11 +58,6 @@ class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  
             @Override
             public void onClick(View v) {
                 listener.onEpisodeSelected(episode);
-
-//                Intent i=new Intent(holder.itemView.getContext(), EpisodeDetails.class);
-//                i.putExtra(EpisodeDetails.EPISODE,episode);
-//                i.putExtra(EpisodeDetails.SHOW_NAME, showName);
-//                holder.itemView.getContext().startActivity(i);
             }
         });
     }
