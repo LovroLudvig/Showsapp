@@ -2,7 +2,9 @@ package com.example.ledeni56.showsapp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -10,12 +12,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 public class MainActivity extends FragmentActivity implements ToolbarProvider{
+    public static final String TOKEN_KEY = "token key";
+    public static final String PREFS_NAME = "prefs name";
     private Toolbar myToolbar;
     private FragmentManager fragmentManager;
     private static boolean closeDialog=false;
+    private String userToken;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,11 +30,27 @@ public class MainActivity extends FragmentActivity implements ToolbarProvider{
         fragmentManager = getSupportFragmentManager();
         setMyActionBar();
 
-        if (fragmentManager.findFragmentById(R.id.frameLayoutLeft)==null){
+        setUserToken();
+
+        if (fragmentManager.findFragmentById(R.id.frameLayoutRight)==null){
             ShowSelectFragment showSelectFragment = new ShowSelectFragment();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.add(R.id.frameLayoutLeft,showSelectFragment);
+            fragmentTransaction.add(R.id.frameLayoutRight,showSelectFragment);
             fragmentTransaction.commit();
+        }
+    }
+
+    private void setUserToken() {
+        if (getIntent().getExtras()!=null){
+            userToken=getIntent().getExtras().getString(LoginActivity.SENDING_TOKEN_KEY);
+            if (getIntent().getExtras().getBoolean(LoginActivity.REMEMBER_KEY)){
+                SharedPreferences.Editor editor = getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit();
+                editor.putString(TOKEN_KEY, userToken);
+                editor.commit();
+            }
+        } else{
+            SharedPreferences sharedPreferences=getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
+            userToken=sharedPreferences.getString(MainActivity.TOKEN_KEY, null);
         }
     }
 
@@ -41,8 +63,7 @@ public class MainActivity extends FragmentActivity implements ToolbarProvider{
 
     @Override
     public void onBackPressed() {
-        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        hideKeyboard();
         Fragment frag=fragmentManager.findFragmentById(R.id.frameLayoutRight);
         if(closeDialog){
             closeDialog=false;
@@ -75,6 +96,13 @@ public class MainActivity extends FragmentActivity implements ToolbarProvider{
             super.onBackPressed();
         }
 
+    }
+    private void hideKeyboard() {
+        View view = getCurrentFocus();
+        if (view != null) {
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).
+                    hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     private boolean checkIfCanExit(AddEpisodeFragment frag) {

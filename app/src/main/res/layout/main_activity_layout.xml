@@ -19,17 +19,9 @@
         app:title="@string/main_title"
         app:titleTextColor="@color/white"/>
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-        <FrameLayout
-            android:id="@+id/frameLayoutLeft"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
         <FrameLayout
             android:id="@+id/frameLayoutRight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></FrameLayout>
-    </FrameLayout>
 </LinearLayout>
