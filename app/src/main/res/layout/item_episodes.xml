@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -19,15 +19,16 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:scaleType="centerCrop"
-        android:layout_marginLeft="5dp" />
+        android:layout_margin="5dp"
+        android:background="@drawable/my_shape_small_pic"/>
 
     <TextView
         android:id="@+id/episodeText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:paddingLeft="110dp"
+        android:layout_toRightOf="@id/episodePicture"
         android:paddingTop="30dp"
+        android:paddingLeft="10dp"
         android:textSize="20sp"
         tools:text="TV EPISODE TEST"
         />
@@ -51,4 +52,4 @@
     </LinearLayout>
 
 
-</FrameLayout>
+</RelativeLayout>

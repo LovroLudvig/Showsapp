@@ -5,48 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:paddingTop="5dp"
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
     tools:context=".ShowSelectActivity"
     android:background="#FFF7F9">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/showToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="@string/main_title"
-        app:titleTextColor="@color/white"/>
 
     <android.support.v7.widget.RecyclerView
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ShowRecyclerView"
+        android:id="@+id/EpisodeRecyclerView"
         android:layout_width="match_parent"
-        android:layout_below="@id/showToolbar"
         android:layout_height="match_parent"/>
 
     <ImageView
-        android:id="@+id/noShowImage"
+        android:id="@+id/noEpisodesImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/showToolbar"
-
 
         android:layout_centerInParent="true"
-        android:paddingTop="75pt"
 
         android:src="@drawable/ic_empty_placeholder"
 
         tools:src="@drawable/ic_empty_placeholder" />
 
     <TextView
-        android:id="@+id/noShowsText"
+        android:id="@+id/noEpisodesText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 
-        android:layout_below="@id/noShowImage"
-        android:text="No Shows to show"
+        android:layout_below="@id/noEpisodesImage"
+        android:text="No Episode's to show"
         android:textSize="20dp"
 
         android:layout_centerInParent="true"/>

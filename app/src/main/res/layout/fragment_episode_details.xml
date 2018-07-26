@@ -8,21 +8,7 @@
     android:orientation="vertical"
     android:background="#FFF7F9">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/episodeDetailsToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-        app:title="Episode details"
-        app:titleTextColor="@color/white"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
         <ImageView
             android:id="@+id/episodePicture"
             android:layout_width="match_parent"
@@ -61,7 +47,6 @@
                 android:textStyle="bold"
                 android:padding="5dp"/>
         </LinearLayout>
-    </LinearLayout>
 
 
 </LinearLayout>

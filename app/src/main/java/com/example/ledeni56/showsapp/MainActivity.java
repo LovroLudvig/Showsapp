@@ -1,0 +1,89 @@
+package com.example.ledeni56.showsapp;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
+import android.view.inputmethod.InputMethodManager;
+
+public class MainActivity extends FragmentActivity implements ToolbarProvider{
+    private Toolbar myToolbar;
+    private FragmentManager fragmentManager;
+    private static boolean closeDialog=false;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_activity_layout);
+        fragmentManager = getSupportFragmentManager();
+        setMyActionBar();
+
+        if (fragmentManager.findFragmentById(R.id.frameLayoutLeft)==null){
+            ShowSelectFragment showSelectFragment = new ShowSelectFragment();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.add(R.id.frameLayoutLeft,showSelectFragment);
+            fragmentTransaction.commit();
+        }
+    }
+
+    private void setMyActionBar() {
+        myToolbar = findViewById(R.id.Toolbar);
+        myToolbar.getMenu().clear();
+        myToolbar.setNavigationIcon(null);
+        myToolbar.setTitle("Shows");
+    }
+
+    @Override
+    public void onBackPressed() {
+        InputMethodManager imm = (InputMethodManager) this.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        Fragment frag=fragmentManager.findFragmentById(R.id.frameLayoutRight);
+        if(closeDialog){
+            closeDialog=false;
+            super.onBackPressed();
+        }else if (frag instanceof AddEpisodeFragment){
+            AddEpisodeFragment fragment=(AddEpisodeFragment) frag;
+            if (checkIfCanExit(fragment)){
+                super.onBackPressed();
+            }else{
+                AlertDialog alertDialog = new AlertDialog.Builder(this).create();
+                alertDialog.setTitle("Warning");
+                alertDialog.setMessage("You have unsaved changes, are you sure you want to exit?");
+                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                MainActivity.closeDialog=true;
+                                onBackPressed();
+                            }
+                        });
+                alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+        } else{
+            super.onBackPressed();
+        }
+
+    }
+
+    private boolean checkIfCanExit(AddEpisodeFragment frag) {
+        Bundle bun=frag.getCurrentFields();
+        return bun.getParcelable("uri")==null && bun.getString("episode and season text").equals("Unknown") && bun.getString("episode desc").equals("") && bun.getString("episode name").equals("");
+    }
+
+    @Override
+    public Toolbar getToolbar() {
+        return findViewById(R.id.Toolbar);
+    }
+}
