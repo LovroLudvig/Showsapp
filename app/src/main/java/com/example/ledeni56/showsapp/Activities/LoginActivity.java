@@ -1,45 +1,39 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Activities;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import com.example.ledeni56.showsapp.Static.InputValidations;
+import com.example.ledeni56.showsapp.Networking.ApiServiceFactory;
+import com.example.ledeni56.showsapp.Networking.ResponseLogin;
+import com.example.ledeni56.showsapp.R;
+import com.example.ledeni56.showsapp.Networking.UserLogin;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class LoginActivity extends AppCompatActivity {
-    private static final String EMAIL_PATTERN = "^[a-zA-Z0-9#_~!$&'()*+,;=:.\"(),:;<>@\\[\\]\\\\]+@[a-zA-Z0-9-]+(\\.[a-zA-Z0-9-]+)*$";
+public class LoginActivity extends BasicActivity {
     private static final int RESULT_CODE_EMAIL = 1;
 
     public static final String SENDING_TOKEN_KEY = "user token SENDING";
     public static final java.lang.String REMEMBER_KEY = "remember key";
 
-    private Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-    private Matcher matcher;
-
     private TextInputLayout emailWrapper;
     private TextInputLayout passwordWrapper;
     private Button loginButton;
     private View createAnAccount;
-    private ApiService apiService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         SharedPreferences sharedPreferences=getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
         if (sharedPreferences.getString(MainActivity.TOKEN_KEY, null)!=null){
             Intent i=new Intent(this,MainActivity.class);
@@ -53,7 +47,6 @@ public class LoginActivity extends AppCompatActivity {
         passwordWrapper=findViewById(R.id.passwordWrapper);
         loginButton=findViewById(R.id.loginButton);
         createAnAccount=findViewById(R.id.createAnAccount);
-        apiService= NetworkingSupportMethods.initApiService();
 
         createAnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,35 +60,34 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard();
-
                 String email = emailWrapper.getEditText().getText().toString();
                 final String password = passwordWrapper.getEditText().getText().toString();
-                if (!validateEmail(email)) {
+                if (!InputValidations.validateEmail(email)) {
                     emailWrapper.setError("Not a valid email address!");
                 } else{
                     emailWrapper.setErrorEnabled(false);
-                } if (!validatePassword(password)) {
+                } if (!InputValidations.validatePassword(password)) {
                     passwordWrapper.setError("Password must have at least 5 characters!");
                 } else {
                     passwordWrapper.setErrorEnabled(false);
                 }
-                if (validateEmail(email) && validatePassword(password)){
-                    NetworkingSupportMethods.showProgress(LoginActivity.this);
-                    apiService.login(new UserLogin(email,password)).enqueue(new Callback<ResponseLogin>() {
+                if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password)){
+                    showProgress();
+                    ApiServiceFactory.get().login(new UserLogin(email,password)).enqueue(new Callback<ResponseLogin>() {
                         @Override
                         public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
-                            NetworkingSupportMethods.hideProgress();
+                            hideProgress();
                             if (response.isSuccessful()){
                                 startMain(response.body().getData().getToken());
                             } else{
-                                NetworkingSupportMethods.showError(LoginActivity.this,"Have you created an account?\n\nYou can create an account bellow.");
+                                showError("Have you created an account?\n\nYou can create an account bellow.");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ResponseLogin> call, Throwable t) {
-                            NetworkingSupportMethods.hideProgress();
-                            NetworkingSupportMethods.showError(LoginActivity.this,"Have you created an account?\n\nYou can create an account bellow.");
+                            hideProgress();
+                            showError("Have you created an account?\n\nYou can create an account bellow.");
                         }
                     });
                 }
@@ -118,24 +110,6 @@ public class LoginActivity extends AppCompatActivity {
             passwordWrapper.getEditText().setText("");
         }
     }
-
-    private void hideKeyboard() {
-        View view = getCurrentFocus();
-        if (view != null) {
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).
-                    hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
-
-    public boolean validateEmail(String email) {
-        matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
-
-    public boolean validatePassword(String password) {
-        return password.length() >= 5;
-    }
-
 
 
 }

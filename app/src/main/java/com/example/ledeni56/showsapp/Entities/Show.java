@@ -1,8 +1,7 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Entities;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Show {
     private static int counter=0;

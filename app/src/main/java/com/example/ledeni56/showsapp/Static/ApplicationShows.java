@@ -1,6 +1,7 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Static;
 
-import android.net.Uri;
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,6 @@ public class ApplicationShows {
         return false;
     }
 
-    //never used but thought it might be useful at some point
     public static ArrayList<Episode> showEpisodes(int id){
         for (Show show:shows){
             if (show.getID()==id){
@@ -53,7 +53,6 @@ public class ApplicationShows {
         return null;
     }
 
-    //returns true if episode with "name" exists in show with id "id"
     public static boolean nameExists(String name, int id) {
         for (Show show:shows){
             if (show.getID()==id){

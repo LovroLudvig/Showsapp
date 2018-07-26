@@ -1,6 +1,8 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -16,6 +18,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.ledeni56.showsapp.Activities.LoginActivity;
+import com.example.ledeni56.showsapp.Activities.MainActivity;
+import com.example.ledeni56.showsapp.Adapters.EpisodesAdapter;
+import com.example.ledeni56.showsapp.Static.ApplicationShows;
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.R;
+import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
 import java.util.ArrayList;
 
@@ -44,7 +55,7 @@ public class EpisodeSelectFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        episodesShowing=ApplicationShows.showEpisodes(showId);
+        episodesShowing= ApplicationShows.showEpisodes(showId);
         recyclerView = view.findViewById(R.id.EpisodeRecyclerView);
         emptyImage=view.findViewById(R.id.noEpisodesImage);
         noEpisodeText=view.findViewById(R.id.noEpisodesText);
@@ -134,14 +145,6 @@ public class EpisodeSelectFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Menu menu=toolbar.getMenu();
-        menu.clear();
-        toolbar.setTitle("Shows");
-        toolbar.setNavigationIcon(null);
-    }
 
     public interface OnEpisodeFragmentInteractionListener {
         public void onEpisodeSelected(Episode episode);

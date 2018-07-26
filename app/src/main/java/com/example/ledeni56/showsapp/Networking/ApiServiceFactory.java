@@ -1,8 +1,6 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Networking;
 
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.support.v7.app.AlertDialog;
+import com.example.ledeni56.showsapp.Interfaces.ApiService;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -10,9 +8,16 @@ import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
 
-public class NetworkingSupportMethods {
-    private static ProgressDialog progressDialog;
+public class ApiServiceFactory {
     private static final String BASE_URL = "https://api.infinum.academy";
+    private static ApiService apiService;
+
+    public static ApiService get(){
+        if (apiService==null){
+            apiService=initApiService();
+        }
+        return apiService;
+    }
 
     public static OkHttpClient createOkHttpClient() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -29,23 +34,5 @@ public class NetworkingSupportMethods {
                 .client(createOkHttpClient())
                 .build()
                 .create(ApiService.class);
-    }
-
-    public static void showError(Context context,String text) {
-        new AlertDialog.Builder(context)
-                .setTitle("Error!")
-                .setMessage(text)
-                .setPositiveButton("OK", null)
-                .create()
-                .show();
-    }
-    public static void hideProgress() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-    }
-
-    public static void showProgress(Context context) {
-        progressDialog = ProgressDialog.show(context, "Please wait", "Loading", true, false);
     }
 }

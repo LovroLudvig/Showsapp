@@ -1,4 +1,4 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Entities;
 
 import android.net.Uri;
 import android.os.Parcel;

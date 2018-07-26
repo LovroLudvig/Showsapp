@@ -1,4 +1,4 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -7,13 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.R;
+import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
 
 public class EpisodeDetailsFragment extends Fragment{

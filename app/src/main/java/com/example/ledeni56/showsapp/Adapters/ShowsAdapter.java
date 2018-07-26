@@ -1,20 +1,20 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.Fragments.ShowSelectFragment;
+import com.example.ledeni56.showsapp.R;
+
 import java.util.List;
 
-class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
+public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> {
 
 
     private final List<Show> shows;

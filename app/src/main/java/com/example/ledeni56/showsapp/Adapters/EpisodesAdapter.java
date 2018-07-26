@@ -1,7 +1,5 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Adapters;
 
-import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,13 +7,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.Fragments.EpisodeSelectFragment;
+import com.example.ledeni56.showsapp.R;
 
 import java.util.List;
 
-class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
+public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
     private final List<Episode> episodes;
     private String showName;
     private Show show;

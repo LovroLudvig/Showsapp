@@ -1,4 +1,4 @@
-package com.example.ledeni56.showsapp;
+package com.example.ledeni56.showsapp.Fragments;
 
 import android.Manifest;
 import android.app.Activity;
@@ -27,6 +27,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ledeni56.showsapp.Static.ApplicationShows;
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.R;
+import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
 import static android.view.View.GONE;
 
@@ -68,7 +73,7 @@ public class AddEpisodeFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        show=ApplicationShows.getShow(showId);
+        show= ApplicationShows.getShow(showId);
 
         episodeNameView=view.findViewById(R.id.episodeName);
         episodeDescriptionView=view.findViewById(R.id.episodeDescription);
@@ -99,7 +104,8 @@ public class AddEpisodeFragment extends Fragment {
             public void onClick(View v) {
                 if (checkFields()){
                     if (addEpisode()){
-                        hideKeyboardFrom(getContext(),getView());
+                        //hideKeyboardFrom(getContext(),getView());
+                        hideKeyboard();
                         getFragmentManager().popBackStack();
                     }
                 }
@@ -259,9 +265,12 @@ public class AddEpisodeFragment extends Fragment {
         return bun;
     }
 
-    public static void hideKeyboardFrom(Context context, View view) {
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    private void hideKeyboard() {
+        View view = getActivity().getCurrentFocus();
+        if (view != null) {
+            ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
+                    hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     @Override

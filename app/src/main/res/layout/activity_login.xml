@@ -12,7 +12,7 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ledeni56.showsapp.LoginActivity"
+    tools:context="com.example.ledeni56.showsapp.Activities.LoginActivity"
     android:orientation="vertical"
     android:gravity="center"
     android:padding="30dp"
