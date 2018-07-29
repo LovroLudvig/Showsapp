@@ -2,24 +2,35 @@ package com.example.ledeni56.showsapp.Entities;
 
 
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
-
+@Entity
 public class Show {
+    @PrimaryKey
+    @NonNull
     private String id;
+    @ColumnInfo(name = "name")
     private String name;
+    @ColumnInfo(name = "description")
     private String description;
-    private ArrayList<Episode> episodes;
+    @Ignore
+    private ArrayList<Episode> episodes= new ArrayList<>();
+    @ColumnInfo(name = "pictureUrl")
     private String pictureUrl;
 
 
 
-    public Show(String id, String name,String description, String url){
+    public Show(String id, String name,String description, String pictureUrl){
         this.id=id;
         this.name=name;
         this.description=description;
-        this.episodes=new ArrayList<>();
-        this.pictureUrl ="https://api.infinum.academy"+url;
+        this.pictureUrl ="https://api.infinum.academy"+pictureUrl;
     }
 
 
@@ -39,7 +50,7 @@ public class Show {
         return name;
     }
 
-    public String getID() {
+    public String getId() {
         return id;
     }
 
@@ -50,7 +61,7 @@ public class Show {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Show) {
-            return this.id.equals(((Show) obj).getID());
+            return this.id.equals(((Show) obj).getId());
         }else{
             return false;
         }

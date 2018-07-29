@@ -34,7 +34,7 @@ public class ApplicationShows {
 
     public static boolean addEpisodeToShow(Episode ep, String id){
         for (Show show:shows){
-            if (show.getID().equals(id)){
+            if (show.getId().equals(id)){
                 return show.addEpisode(ep);
             }
         }
@@ -43,7 +43,7 @@ public class ApplicationShows {
 
     public static ArrayList<Episode> showEpisodes(String id){
         for (Show show:shows){
-            if (show.getID().equals(id)){
+            if (show.getId().equals(id)){
                 return show.getEpisodes();
             }
         }
@@ -52,7 +52,7 @@ public class ApplicationShows {
 
     public static Show getShow(String id){
         for (Show show:shows){
-            if (show.getID().equals(id)){
+            if (show.getId().equals(id)){
                 return show;
             }
         }
@@ -61,7 +61,7 @@ public class ApplicationShows {
 
     public static boolean nameExists(String name, String id) {
         for (Show show:shows){
-            if (show.getID().equals(id)){
+            if (show.getId().equals(id)){
                 for (Episode ep:show.getEpisodes()){
                     if (ep.getName().equals(name)){
                         return true;

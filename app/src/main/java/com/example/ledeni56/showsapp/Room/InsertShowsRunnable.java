@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.example.ledeni56.showsapp.Entities.DatabaseShow;
 import com.example.ledeni56.showsapp.Entities.Show;
 
 import java.util.List;
@@ -15,9 +14,9 @@ public class InsertShowsRunnable implements Runnable {
     private final DatabaseCallback<Void> callback;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());
-    private final List<DatabaseShow> shows;
+    private final List<Show> shows;
 
-    public InsertShowsRunnable(Context context, List<DatabaseShow> shows, DatabaseCallback<Void> callback) {
+    public InsertShowsRunnable(Context context, List<Show> shows, DatabaseCallback<Void> callback) {
         this.context = context;
         this.shows = shows;
         this.callback = callback;

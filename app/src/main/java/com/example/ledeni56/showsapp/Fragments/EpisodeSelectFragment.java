@@ -98,7 +98,7 @@ public class EpisodeSelectFragment extends Fragment {
         addBurron.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AddEpisodeFragment addEpisodeFragment=AddEpisodeFragment.newInstance(show.getID());
+                AddEpisodeFragment addEpisodeFragment=AddEpisodeFragment.newInstance(show.getId());
                 fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_up,R.anim.exit_up,R.anim.enter_up,R.anim.exit_up).replace(R.id.frameLayoutRight,addEpisodeFragment).addToBackStack("add Episode").commit();
             }
         });

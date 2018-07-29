@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -21,11 +20,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.ledeni56.showsapp.Activities.BasicActivity;
 import com.example.ledeni56.showsapp.Activities.LoginActivity;
 import com.example.ledeni56.showsapp.Activities.MainActivity;
 import com.example.ledeni56.showsapp.Adapters.ShowsAdapter;
-import com.example.ledeni56.showsapp.Entities.DatabaseShow;
 import com.example.ledeni56.showsapp.Entities.Episode;
 import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 import com.example.ledeni56.showsapp.Networking.ApiEpisode;
@@ -41,9 +38,7 @@ import com.example.ledeni56.showsapp.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import me.everything.android.ui.overscroll.HorizontalOverScrollBounceEffectDecorator;
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
-import me.everything.android.ui.overscroll.adapters.RecyclerViewOverScrollDecorAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -95,11 +90,11 @@ public class ShowSelectFragment extends Fragment {
     }
 
     private void getFromDB(final String showId) {
-        showsAppRepository.getShows(new DatabaseCallback<List<DatabaseShow>>() {
+        showsAppRepository.getShows(new DatabaseCallback<List<Show>>() {
             @Override
-            public void onSuccess(List<DatabaseShow> data) {
-                for (DatabaseShow databaseShow:data){
-                    ApplicationShows.addShow(new Show(databaseShow.getId(), databaseShow.getName(), databaseShow.getDescription(),databaseShow.getPictureUrl()));
+            public void onSuccess(List<Show> data) {
+                for (Show databaseShow:data){
+                    ApplicationShows.addShow(databaseShow);
                 }
                 showsAppRepository.getEpisodes(new DatabaseCallback<List<Episode>>() {
                     @Override
@@ -113,24 +108,20 @@ public class ShowSelectFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable t) {
-
+                        showError("Unknown Error");
                     }
                 });
             }
 
             @Override
             public void onError(Throwable t) {
-
+                showError("Unknown Error");
             }
         });
     }
 
     private void insertIntoDb(final String showId){
-        ArrayList<DatabaseShow> databaseShows=new ArrayList<>();
-        for (Show show:ApplicationShows.getShows()){
-            databaseShows.add(new DatabaseShow(show.getID(),show.getName(),show.getDescription(),show.getPictureUrl()));
-        }
-        showsAppRepository.insertShows(databaseShows, new DatabaseCallback<Void>() {
+        showsAppRepository.insertShows(ApplicationShows.getShows(), new DatabaseCallback<Void>() {
             @Override
             public void onSuccess(Void data) {
                 showsAppRepository.insertEpisodes(ApplicationShows.getShow(showId).getEpisodes(), new DatabaseCallback<Void>() {
@@ -142,14 +133,14 @@ public class ShowSelectFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable t) {
-
+                        showError("Unknown Error");
                     }
                 });
             }
 
             @Override
             public void onError(Throwable t) {
-
+                showError("Unknown Error");
             }
         });
 

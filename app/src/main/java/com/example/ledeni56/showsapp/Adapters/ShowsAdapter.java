@@ -52,7 +52,7 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onShowSelected(show.getID());
+                listener.onShowSelected(show.getId());
                 }
             });
         }

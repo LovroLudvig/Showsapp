@@ -2,7 +2,6 @@ package com.example.ledeni56.showsapp.Room;
 
 import android.content.Context;
 
-import com.example.ledeni56.showsapp.Entities.DatabaseShow;
 import com.example.ledeni56.showsapp.Entities.Episode;
 import com.example.ledeni56.showsapp.Entities.Show;
 
@@ -26,7 +25,7 @@ public class ShowsAppRepository {
         this.executor = Executors.newSingleThreadExecutor();
     }
 
-    public void getShows(DatabaseCallback<List<DatabaseShow>> callback) {
+    public void getShows(DatabaseCallback<List<Show>> callback) {
         cancel();
         this.task = executor.submit(new GetShowsRunnable(context, callback));
     }
@@ -35,7 +34,7 @@ public class ShowsAppRepository {
         this.task = executor.submit(new GetEpisodesRunnable(context, callback));
     }
 
-    public void insertShows(List<DatabaseShow> shows, DatabaseCallback<Void> callback) {
+    public void insertShows(List<Show> shows, DatabaseCallback<Void> callback) {
         cancel();
         this.task = executor.submit(new InsertShowsRunnable(context, shows, callback));
     }

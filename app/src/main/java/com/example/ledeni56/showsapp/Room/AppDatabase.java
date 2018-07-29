@@ -3,13 +3,13 @@ package com.example.ledeni56.showsapp.Room;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import com.example.ledeni56.showsapp.Entities.DatabaseShow;
 import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Entities.Show;
 
 
 @Database(
         entities = {
-                DatabaseShow.class,
+                Show.class,
                 Episode.class
         },
         version = 1
