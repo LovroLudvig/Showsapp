@@ -9,11 +9,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 
+import com.example.ledeni56.showsapp.Entities.Episode;
+import com.example.ledeni56.showsapp.Networking.ApiEpisode;
+import com.example.ledeni56.showsapp.Entities.Show;
+import com.example.ledeni56.showsapp.Networking.ApiShowDescription;
+import com.example.ledeni56.showsapp.Networking.ApiShowId;
+import com.example.ledeni56.showsapp.Networking.ResponseData;
+import com.example.ledeni56.showsapp.Static.ApplicationShows;
 import com.example.ledeni56.showsapp.Static.InputValidations;
 import com.example.ledeni56.showsapp.Networking.ApiServiceFactory;
 import com.example.ledeni56.showsapp.Networking.ResponseLogin;
 import com.example.ledeni56.showsapp.R;
 import com.example.ledeni56.showsapp.Networking.UserLogin;
+
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,6 +69,7 @@ public class LoginActivity extends BasicActivity {
             @Override
             public void onClick(View v) {
                 hideKeyboard();
+
                 String email = emailWrapper.getEditText().getText().toString();
                 final String password = passwordWrapper.getEditText().getText().toString();
                 if (!InputValidations.validateEmail(email)) {
@@ -73,6 +83,7 @@ public class LoginActivity extends BasicActivity {
                 }
                 if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password)){
                     showProgress();
+
                     ApiServiceFactory.get().login(new UserLogin(email,password)).enqueue(new Callback<ResponseLogin>() {
                         @Override
                         public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
@@ -94,6 +105,7 @@ public class LoginActivity extends BasicActivity {
             }
         });
     }
+
 
     private void startMain(String token) {
         Intent i=new Intent(this,MainActivity.class);

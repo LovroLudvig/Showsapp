@@ -41,19 +41,14 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHo
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         TextView titleText = holder.itemView.findViewById(R.id.episodeText);
         TextView episodeAndSeason= holder.itemView.findViewById(R.id.seasonAndEpisodeText);
-        ImageView episodeImage=holder.itemView.findViewById(R.id.episodePicture);
 
 
 
         final Episode episode = episodes.get(position);
 
         titleText.setText(episode.getName());
-        episodeAndSeason.setText("Season "+String.valueOf(episode.getSeasonNumber())+", Ep "+String.valueOf(episode.getEpisodeNumber()));
-        Glide.with(holder.itemView.getContext()).load(episode.getPicture()).into(episodeImage);
-
-        if (episode.getPicture()==null){
-            episodeImage.setVisibility(View.GONE);
-        }
+        String episodeAndSeasonText=fix("S"+String.valueOf(episode.getSeasonNumber())+" Ep"+String.valueOf(episode.getEpisodeNumber()));
+        episodeAndSeason.setText(episodeAndSeasonText);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -61,6 +56,13 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHo
                 listener.onEpisodeSelected(episode);
             }
         });
+    }
+
+    private String fix(String s) {
+        while(s.length()<8){
+            s=s+" ";
+        }
+        return s;
     }
 
     @Override

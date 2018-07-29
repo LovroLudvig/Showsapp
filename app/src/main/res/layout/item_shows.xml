@@ -1,15 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="8dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp"
-    android:paddingTop="8dp"    >
+    android:layout_marginBottom="8dp"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:layout_marginTop="8dp"
+    android:background="@drawable/my_rounded_shape">
 
-
+    <ImageView
+        android:id="@+id/showPicture"
+        android:layout_width="100dp"
+        android:layout_height="125dp"
+        android:layout_marginLeft="5dp"
+        android:scaleType="centerCrop"
+        android:background="@drawable/my_shape_small_pic"/>
     <TextView
         android:id="@+id/showText"
         android:layout_width="match_parent"
@@ -17,9 +24,10 @@
         android:layout_gravity="left"
         android:paddingLeft="20dp"
         android:textSize="20sp"
-        tools:text="TV SHOW TEST"
-        android:background="@drawable/my_rounded_shape"/>
+        android:layout_toRightOf="@id/showPicture"
+        android:layout_centerVertical="true"
+        tools:text="TV SHOW TEST"/>
 
 
 
-</FrameLayout>
+</RelativeLayout>
