@@ -110,7 +110,7 @@ public class LoadingScreenActivity extends BasicActivity {
 
             @Override
             public void onError(Throwable t) {
-
+                showError("Unknown error. Please exit application and try again.");
             }
         });
     }
@@ -122,7 +122,9 @@ public class LoadingScreenActivity extends BasicActivity {
                 if (response.isSuccessful()) {
                     List<ApiShowId> showIdList = response.body().getData();
                     for (ApiShowId apiShowId:showIdList){
-                        ApplicationShows.addShow(new Show(apiShowId.getId(),apiShowId.getName(),"",apiShowId.getPictureUrl()));
+                        if (!apiShowId.getPictureUrl().equals("")) {
+                            ApplicationShows.addShow(new Show(apiShowId.getId(), apiShowId.getName(), "", apiShowId.getPictureUrl(), apiShowId.getLikesCount()));
+                        }
                     }
                     insertShowsDb();
                 }else{

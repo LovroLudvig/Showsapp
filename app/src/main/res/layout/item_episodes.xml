@@ -21,7 +21,12 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:paddingLeft="95dp"
-        tools:text="TV EPISODE TEST"
-        />
+        tools:text="TV EPISODE TEST"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:paddingRight="10dp"
+        android:src="@drawable/ic_keyboard_arrow_right"/>
 
 </FrameLayout>

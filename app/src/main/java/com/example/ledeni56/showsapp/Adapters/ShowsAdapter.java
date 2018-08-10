@@ -22,17 +22,28 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
 
     private final List<Show> shows;
     private ShowSelectFragment.OnShowFragmentInteractionListener listener;
+    private int flag;
 
-    public ShowsAdapter(List<Show> shows, ShowSelectFragment.OnShowFragmentInteractionListener listener) {
+    public ShowsAdapter(List<Show> shows, int i, ShowSelectFragment.OnShowFragmentInteractionListener listener) {
             this.shows = shows;
             this.listener=listener;
+            this.flag=i;
         }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows_grid, parent, false);
+        View view;
+        if (flag==1){
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows_grid, parent, false);
+        }else{
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows, parent, false);
+        }
         return new ViewHolder(view);
+    }
+
+    public int getFlag() {
+        return flag;
     }
 
     @Override

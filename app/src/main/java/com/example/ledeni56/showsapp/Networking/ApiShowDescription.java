@@ -11,6 +11,8 @@ public class ApiShowDescription {
     private String description;
     @Json(name = "imageUrl")
     private String pictureUrl;
+    @Json(name = "likesCount")
+    private int likesCOunt;
 
     public String getId() {
         return id;
@@ -26,5 +28,9 @@ public class ApiShowDescription {
 
     public String getPictureUrl() {
         return pictureUrl;
+    }
+
+    public int getLikesCOunt() {
+        return likesCOunt;
     }
 }

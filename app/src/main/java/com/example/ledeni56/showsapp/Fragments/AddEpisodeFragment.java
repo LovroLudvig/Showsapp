@@ -6,13 +6,17 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,21 +31,41 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.ledeni56.showsapp.Activities.MainActivity;
+import com.example.ledeni56.showsapp.Interfaces.ApiService;
+import com.example.ledeni56.showsapp.Networking.ApiEpisode;
+import com.example.ledeni56.showsapp.Networking.ApiServiceFactory;
+import com.example.ledeni56.showsapp.Networking.EpisodeUpload;
+import com.example.ledeni56.showsapp.Networking.MediaResponse;
+import com.example.ledeni56.showsapp.Networking.ResponseData;
 import com.example.ledeni56.showsapp.Static.ApplicationShows;
 import com.example.ledeni56.showsapp.Entities.Episode;
 import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.R;
 import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.UUID;
+
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static android.view.View.GONE;
 
 
 public class AddEpisodeFragment extends Fragment {
     private static final String ARG_NUMBER = "ARG_NUMBER";
-    private static final int REQUEST_CODE_PERMISSION=1;
-    private static final int REQUEST_CODE_PICTURE = 2;
+    private static final int REQUEST_CODE_PERMISSION_GALLERY=1;
+    private static final int REQUEST_CODE_PICTURE_FROM_GALLERY = 2;
+    private static final int REQUEST_CODE_PERMISSION_CAMERA = 3;
+    private static final int REQUEST_IMAGE_CAPTURE = 4;
 
     private String showId;
     private Show show;
@@ -93,11 +117,36 @@ public class AddEpisodeFragment extends Fragment {
         addPhotoLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                    requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION);
-                } else {
-                    loadFromGallery();
-                }
+                final Dialog dialog=new Dialog(getContext());
+                dialog.setContentView(R.layout.camera_gallery_picker);
+                Button galleryButton=dialog.findViewById(R.id.galleryButton);
+                Button cameraButton=dialog.findViewById(R.id.cameraButton);
+
+                cameraButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_CAMERA);
+                        } else {
+                            loadFromCamera();
+                        }
+                    }
+                });
+
+                galleryButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE_PERMISSION_GALLERY);
+                        } else {
+                            loadFromGallery();
+                        }
+                    }
+                });
+                dialog.show();
+
             }
         });
 
@@ -106,9 +155,7 @@ public class AddEpisodeFragment extends Fragment {
             public void onClick(View v) {
                 if (checkFields()){
                     if (addEpisode()){
-                        //hideKeyboardFrom(getContext(),getView());
-                        hideKeyboard();
-                        getFragmentManager().popBackStack();
+                        uploadMedia();
                     }
                 }
             }
@@ -149,6 +196,67 @@ public class AddEpisodeFragment extends Fragment {
 
     }
 
+    private void uploadMedia() {
+        File file;
+        file=new File(episodeUriPicture.getPath());
+
+        ApiServiceFactory.get().uploadMedia(((MainActivity)getActivity()).getUserToken(),RequestBody.create(MediaType.parse("image/jpg"),file)).enqueue(new Callback<ResponseData<MediaResponse>>() {
+            @Override
+            public void onResponse(Call<ResponseData<MediaResponse>> call, Response<ResponseData<MediaResponse>> response) {
+                if (response.isSuccessful()) {
+                    uploadEpisode(response);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData<MediaResponse>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public static String getRealPathFromUri(Context context, Uri contentUri) {
+        Cursor cursor = null;
+        try {
+            String[] proj = { MediaStore.Images.Media.DATA };
+            cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            return cursor.getString(column_index);
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+    }
+
+    private void uploadEpisode(Response<ResponseData<MediaResponse>> response) {
+        if (response.isSuccessful()) {
+            ApiServiceFactory.get().uploadEpisode(((MainActivity) getActivity()).getUserToken(),
+                    new EpisodeUpload(showId, response.body().getData().getMediaId(), addedEpisode.getName(), addedEpisode.getDescription(), Integer.toString(addedEpisode.getEpisodeNumber()), Integer.toString(addedEpisode.getSeasonNumber()))).enqueue(new Callback<ResponseData<ApiEpisode>>() {
+                @Override
+                public void onResponse(Call<ResponseData<ApiEpisode>> call, Response<ResponseData<ApiEpisode>> response) {
+                    saveEpisode(response);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseData<ApiEpisode>> call, Throwable t) {
+
+                }
+            });
+        }
+
+    }
+
+    private void saveEpisode(Response<ResponseData<ApiEpisode>> response) {
+        if (response.isSuccessful()) {
+            ApiEpisode episode = response.body().getData();
+            ApplicationShows.addEpisodeToShow(new Episode(episode.getId(), showId, episode.getName(), episode.getDescription(), episode.getEpisodeNumber(), episode.getSeasonNumber(), episode.getPicture()), showId);
+            hideKeyboard();
+            getFragmentManager().popBackStack();
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -181,7 +289,7 @@ public class AddEpisodeFragment extends Fragment {
                 episodeUriPicture.toString()
         );
 
-        if (ApplicationShows.addEpisodeToShow(addedEpisode, showId)){
+        if (!ApplicationShows.getShow(showId).getEpisodes().contains(addedEpisode)){
             return true;
         }else{
             Toast.makeText(getContext(), "Episode already exists, please check Season and Episode", Toast.LENGTH_SHORT).show();
@@ -202,6 +310,9 @@ public class AddEpisodeFragment extends Fragment {
         }else if(ApplicationShows.nameExists(episodeNameView.getText().toString(), showId)){
             Toast.makeText(getContext(), "Name already exists, please check Title", Toast.LENGTH_SHORT).show();
             return false;
+        }else if(episodeUriPicture==null){
+            Toast.makeText(getContext(), "Please select a picture", Toast.LENGTH_SHORT).show();
+            return false;
         } else{
             return true;
         }
@@ -210,10 +321,30 @@ public class AddEpisodeFragment extends Fragment {
     @Override
     public void onRequestPermissionsResult(int requestCode,String[] permissions, int[] grantResults) {
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            loadFromGallery();
+            if(requestCode==REQUEST_CODE_PERMISSION_GALLERY){
+                loadFromGallery();
+            } else if (requestCode==REQUEST_CODE_PERMISSION_CAMERA){
+                loadFromCamera();
+            }
         } else {
-            Toast.makeText(getContext(),"Can't load image without permission",Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(),"Need permission to do that action",Toast.LENGTH_SHORT);
         }
+    }
+
+    private File createImageFile() throws IOException {
+        String timeStamp =
+                new SimpleDateFormat("yyyyMMdd_HHmmss",
+                        Locale.getDefault()).format(new Date());
+        String imageFileName = "IMG_" + timeStamp + "_";
+        File storageDir =
+                getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
+        episodeUriPicture=Uri.fromFile(image);
+        return image;
     }
 
     private void loadFromGallery() {
@@ -223,19 +354,43 @@ public class AddEpisodeFragment extends Fragment {
         Uri data= Uri.parse(picturesPath);
 
         i.setDataAndType(data, "image/*");
-        startActivityForResult(i, REQUEST_CODE_PICTURE);
+        startActivityForResult(i, REQUEST_CODE_PICTURE_FROM_GALLERY);
+    }
+
+    private void loadFromCamera(){
+        Intent pictureIntent = new Intent(
+                MediaStore.ACTION_IMAGE_CAPTURE);
+        if(pictureIntent.resolveActivity(getActivity().getPackageManager()) != null){
+            //Create a file to store the image
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            if (photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(getActivity(),"com.example.android.fileprovider", photoFile);
+                pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        photoURI);
+                startActivityForResult(pictureIntent,
+                        REQUEST_IMAGE_CAPTURE);
+            }
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode==REQUEST_CODE_PICTURE){
-            if (resultCode== Activity.RESULT_OK){
-                Uri result=data.getData();
-                Glide.with(this).load(result).into(episodePhoto);
-                addPhotoIcon.setVisibility(GONE);
-                addPhotoText.setVisibility(GONE);
-                episodeUriPicture=result;
-            }
+        if (requestCode==REQUEST_CODE_PICTURE_FROM_GALLERY && resultCode== Activity.RESULT_OK){
+            Uri result=data.getData();
+            Glide.with(this).load(result).into(episodePhoto);
+            addPhotoIcon.setVisibility(GONE);
+            addPhotoText.setVisibility(GONE);
+            episodeUriPicture=Uri.fromFile(new File(getRealPathFromUri(getActivity(),result)));
+
+        }else if (requestCode==REQUEST_IMAGE_CAPTURE && resultCode==Activity.RESULT_OK){
+            Glide.with(this).load(episodeUriPicture).into(episodePhoto);
+            addPhotoIcon.setVisibility(GONE);
+            addPhotoText.setVisibility(GONE);
         }
     }
 

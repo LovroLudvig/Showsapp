@@ -102,6 +102,10 @@ public class MainActivity extends BasicActivity implements ToolbarProvider {
 
     }
 
+    public String getUserToken() {
+        return userToken;
+    }
+
     private boolean checkIfCanExit(AddEpisodeFragment frag) {
         Bundle bun=frag.getCurrentFields();
         return bun.getParcelable("uri")==null && bun.getString("episode and season text").equals("Unknown") && bun.getString("episode desc").equals("") && bun.getString("episode name").equals("");

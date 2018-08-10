@@ -18,6 +18,7 @@ public class ApiEpisode {
     @Json(name = "imageUrl")
     private String picture;
 
+
     public String getDescription() {
         return description;
     }

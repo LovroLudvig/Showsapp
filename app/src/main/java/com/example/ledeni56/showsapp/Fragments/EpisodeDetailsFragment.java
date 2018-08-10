@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,6 +36,7 @@ public class EpisodeDetailsFragment extends Fragment{
     private ToolbarProvider listener;
     private Toolbar toolbar;
     private String showName;
+    private View commentsView;
 
     @Nullable
     @Override
@@ -49,8 +51,19 @@ public class EpisodeDetailsFragment extends Fragment{
         episodeTitle=view.findViewById(R.id.episodeTitle);
         episodeDescription=view.findViewById(R.id.episodeDescription);
         episodeNumber=view.findViewById(R.id.episodeNumber);
+        commentsView=view.findViewById(R.id.commentsView);
 
-        OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
+        commentsView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                EpisodeCommentsFragment episodeCommentsFragment = EpisodeCommentsFragment.newInstance(episode);
+                FragmentManager fragmentManager=getFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_down,R.anim.exit_down,R.anim.enter_down,R.anim.exit_down).replace(R.id.frameLayoutRight,episodeCommentsFragment).addToBackStack("comments").commit();
+
+            }
+        });
+
+        //OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
         setMyToolbar();
 
         Glide.with(this).load(episode.getPicture()).into(episodePicture);

@@ -1,32 +1,39 @@
 package com.example.ledeni56.showsapp.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.ledeni56.showsapp.Activities.LoginActivity;
 import com.example.ledeni56.showsapp.Activities.MainActivity;
 import com.example.ledeni56.showsapp.Adapters.EpisodesAdapter;
+import com.example.ledeni56.showsapp.Entities.DislikedShow;
+import com.example.ledeni56.showsapp.Entities.LikedShow;
+import com.example.ledeni56.showsapp.Networking.ApiServiceFactory;
+import com.example.ledeni56.showsapp.Networking.ResponseLikeDislike;
+import com.example.ledeni56.showsapp.Room.DatabaseCallback;
+import com.example.ledeni56.showsapp.Room.ShowsAppRepository;
 import com.example.ledeni56.showsapp.Static.ApplicationShows;
 import com.example.ledeni56.showsapp.Entities.Episode;
 import com.example.ledeni56.showsapp.Entities.Show;
@@ -34,8 +41,11 @@ import com.example.ledeni56.showsapp.R;
 import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class EpisodeSelectFragment extends Fragment {
@@ -58,6 +68,9 @@ public class EpisodeSelectFragment extends Fragment {
     private TextView showDescription;
     private FloatingActionButton addBurron;
     private TextView episodeCount;
+    private ProgressDialog progressDialog;
+    private ShowsAppRepository showsAppRepository;
+    private TextView likesCount;
 
     @Nullable
     @Override
@@ -79,6 +92,11 @@ public class EpisodeSelectFragment extends Fragment {
         showDescription=view.findViewById(R.id.showDescription);
         addBurron=view.findViewById(R.id.addEpisode);
         episodeCount=view.findViewById(R.id.episodesCount);
+        likesCount=view.findViewById(R.id.likeCount);
+
+        if (showsAppRepository==null){
+            showsAppRepository= ShowsAppRepository.get(getActivity());
+        }
 
 
         fragmentManager=getFragmentManager();
@@ -102,40 +120,298 @@ public class EpisodeSelectFragment extends Fragment {
                 fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_up,R.anim.exit_up,R.anim.enter_up,R.anim.exit_up).replace(R.id.frameLayoutRight,addEpisodeFragment).addToBackStack("add Episode").commit();
             }
         });
+        initLikes(view);
     }
 
+    private void initLikes(View view) {
+        ImageButton likeButton= view.findViewById(R.id.likeButton);
+        ImageButton dislikeButton= view.findViewById(R.id.dislikeButton);
+
+        likesCount.setText(String.valueOf(show.getLikesCount()));
+
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isInternetAvailable()){
+                    likeShow();
+                }else{
+                    Toast.makeText(getActivity(),"Internet is not available.", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+        dislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isInternetAvailable()){
+                    dislikeShow();
+                }else{
+                    Toast.makeText(getActivity(),"Internet is not available.", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    private void dislikeShow() {
+        showsAppRepository.getDislikedShow(new DatabaseCallback<List<DislikedShow>>() {
+            @Override
+            public void onSuccess(List<DislikedShow> data) {
+                for (DislikedShow dislikedShow:data) {
+                    if (dislikedShow.getId().equals(showId)) {
+                        return;
+                    }
+                }
+                showsAppRepository.getLikedShows(new DatabaseCallback<List<LikedShow>>() {
+                    @Override
+                    public void onSuccess(List<LikedShow> data) {
+                        if(dataContainsLikedShow(showId, data)){
+                            showProgress();
+                            ApiServiceFactory.get().dislikeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                @Override
+                                public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                    if (response.isSuccessful()){
+                                        ApiServiceFactory.get().dislikeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                            @Override
+                                            public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                                if (response.isSuccessful()){
+                                                    hideProgress();
+                                                    likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                                }else{
+                                                    hideProgress();
+                                                    showError("error");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                                hideProgress();
+                                                showError("error");
+                                            }
+                                        });
+                                    }else{
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                    hideProgress();
+                                    showError("error");
+                                }
+                            });
+
+
+                        }else{
+                            ApiServiceFactory.get().dislikeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                @Override
+                                public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                    if (response.isSuccessful()){
+                                        hideProgress();
+                                        likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                    }else{
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                    hideProgress();
+                                    showError("error");
+                                }
+                            });
+                        }
+                        showsAppRepository.deleteLikedShow(new LikedShow(showId), new DatabaseCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void data) {
+                                showsAppRepository.insertDislikedShow(new DislikedShow(showId), new DatabaseCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void data) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable t) {
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                hideProgress();
+                                showError("error");
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        hideProgress();
+                        showError("error");
+                    }
+                });
+            }
+            @Override
+            public void onError(Throwable t) {
+                hideProgress();
+                showError("error");
+            }
+        });
+    }
+
+    private void likeShow() {
+        showsAppRepository.getLikedShows(new DatabaseCallback<List<LikedShow>>() {
+            @Override
+            public void onSuccess(List<LikedShow> data) {
+                for (LikedShow likedShow:data) {
+                    if (likedShow.getId().equals(showId)) {
+                        return;
+                    }
+                }
+                showsAppRepository.getDislikedShow(new DatabaseCallback<List<DislikedShow>>() {
+                    @Override
+                    public void onSuccess(List<DislikedShow> data) {
+                        if(dataContainsDislikedShow(showId, data)){
+                            showProgress();
+                            ApiServiceFactory.get().likeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                @Override
+                                public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                    if (response.isSuccessful()){
+                                        ApiServiceFactory.get().likeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                            @Override
+                                            public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                                if (response.isSuccessful()){
+                                                    hideProgress();
+                                                    likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                                }else{
+                                                    hideProgress();
+                                                    showError("error");
+                                                }
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                                hideProgress();
+                                                showError("error");
+                                            }
+                                        });
+                                    }else{
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                    hideProgress();
+                                    showError("error");
+                                }
+                            });
+
+
+                        }else{
+                            ApiServiceFactory.get().likeShow(((MainActivity)getActivity()).getUserToken(),show.getId()).enqueue(new Callback<ResponseLikeDislike>() {
+                                @Override
+                                public void onResponse(Call<ResponseLikeDislike> call, Response<ResponseLikeDislike> response) {
+                                    if (response.isSuccessful()){
+                                        hideProgress();
+                                        likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                    }else{
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseLikeDislike> call, Throwable t) {
+                                    hideProgress();
+                                    showError("error");
+                                }
+                            });
+                        }
+                        showsAppRepository.deleteDislikedShow(new DislikedShow(showId), new DatabaseCallback<Void>() {
+                            @Override
+                            public void onSuccess(Void data) {
+                                showsAppRepository.insertLikedShow(new LikedShow(showId), new DatabaseCallback<Void>() {
+                                    @Override
+                                    public void onSuccess(Void data) {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable t) {
+                                        hideProgress();
+                                        showError("error");
+                                    }
+                                });
+                            }
+
+                            @Override
+                            public void onError(Throwable t) {
+                                hideProgress();
+                                showError("error");
+                            }
+                        });
+
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        hideProgress();
+                        showError("error");
+                    }
+                });
+            }
+            @Override
+            public void onError(Throwable t) {
+                hideProgress();
+                showError("error");
+            }
+        });
+    }
+
+    private boolean dataContainsDislikedShow(String showId, List<DislikedShow> data) {
+        for (DislikedShow dislikedShow:data){
+            if (dislikedShow.getId().equals(showId)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean dataContainsLikedShow(String showId, List<LikedShow> data) {
+        for (LikedShow likedShow:data){
+            if (likedShow.getId().equals(showId)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     private void setToolbar(View view) {
         episodeCount.setText(String.valueOf(show.getEpisodes().size()));
         showDescription.setText("    "+show.getDescription());
         collapsingToolbar.setTitle(show.getName());
         Glide.with(getContext()).load(Uri.parse(show.getPictureUrl())).into(imageView);
-        animToolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_register_24dp);
+        animToolbar.setNavigationIcon(R.drawable.ic_shortcut_arrow_back);
         animToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().onBackPressed();
             }
         });
-        AppBarLayout appBarLayout = view.findViewById(R.id.appBarLayout);
-        appBarLayout.addOnOffsetChangedListener(new AppBarLayout.OnOffsetChangedListener() {
-            boolean isShow = true;
-            int scrollRange = -1;
-
+        ViewGroup mContentContainer = view.findViewById(R.id.viewGroup);
+        mContentContainer.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-                if (scrollRange == -1) {
-                    scrollRange = appBarLayout.getTotalScrollRange();
-                }
-                if (scrollRange + verticalOffset == 0) {
-                    collapsingToolbar.setTitle(show.getName());
-                    isShow = true;
-                } else if(isShow) {
-                    collapsingToolbar.setTitle(" ");
-                    isShow = false;
-                }
+            public void onClick(View v) {
+                return;
             }
         });
+
     }
 
     private void checkIfEpisodesEmpty() {
@@ -187,8 +463,36 @@ public class EpisodeSelectFragment extends Fragment {
         }
     }
 
+    private void showProgress() {
+        progressDialog = ProgressDialog.show(getActivity(), "Please wait", "Loading...", true, false);
+    }
+
+    private void hideProgress() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+    }
+
+    protected void showError(String text) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Error!")
+                .setMessage(text)
+                .setPositiveButton("OK", null)
+                .create()
+                .show();
+    }
+
 
     public interface OnEpisodeFragmentInteractionListener {
         public void onEpisodeSelected(Episode episode);
+    }
+    private boolean isInternetAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager == null) {
+            return false;
+        }
+
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected();
     }
 }

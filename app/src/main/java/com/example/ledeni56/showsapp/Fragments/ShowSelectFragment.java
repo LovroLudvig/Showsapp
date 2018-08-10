@@ -9,10 +9,12 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -53,6 +55,7 @@ public class ShowSelectFragment extends Fragment {
     private ToolbarProvider listener;
     private ProgressDialog progressDialog;
     private ShowsAppRepository showsAppRepository;
+    private static int flag=1;
 
     @Nullable
     @Override
@@ -70,23 +73,71 @@ public class ShowSelectFragment extends Fragment {
             showsAppRepository= ShowsAppRepository.get(getActivity());
         }
         setToolbar();
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-        recyclerView.setAdapter(new ShowsAdapter(shows, new OnShowFragmentInteractionListener() {
+        recyclerView.setAdapter(new ShowsAdapter(shows, 1, new OnShowFragmentInteractionListener() {
+                @Override
+                public void onShowSelected(final String showId) {
+                    if (fragmentManager.getBackStackEntryCount() > 1) {
+                        fragmentManager.popBackStack();
+                    }
+                    if (isInternetAvailable()) {
+                        loadFromApi(showId);
+                    } else {
+                        getFromDB(showId);
+                    }
+
+                }
+            }));
+        final FloatingActionButton floatingActionButton=view.findViewById(R.id.floatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onShowSelected(final String showId) {
-                if (fragmentManager.getBackStackEntryCount() > 1) {
-                    fragmentManager.popBackStack();
-                }
-                if(isInternetAvailable()){
-                    loadFromApi(showId);
-                }else{
-                    getFromDB(showId);
-                }
-
-
+            public void onClick(View v) {
+                flag=1-flag;
+                makeChangesToFloatingActionButton(floatingActionButton);
             }
-        }));
+        });
+        makeChangesToFloatingActionButton(floatingActionButton);
+    }
+
+    private void makeChangesToFloatingActionButton(FloatingActionButton floatingActionButton) {
+        if (flag==1){
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+            OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            recyclerView.setAdapter(new ShowsAdapter(shows,1, new OnShowFragmentInteractionListener() {
+                @Override
+                public void onShowSelected(final String showId) {
+                    if (fragmentManager.getBackStackEntryCount() > 1) {
+                        fragmentManager.popBackStack();
+                    }
+                    if(isInternetAvailable()){
+                        loadFromApi(showId);
+                    }else{
+                        getFromDB(showId);
+                    }
+                }
+            }));
+            floatingActionButton.setImageResource(R.drawable.ic_list_view);
+        }else{
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            recyclerView.setAdapter(new ShowsAdapter(shows,0, new OnShowFragmentInteractionListener() {
+                @Override
+                public void onShowSelected(final String showId) {
+                    if (fragmentManager.getBackStackEntryCount() > 1) {
+                        fragmentManager.popBackStack();
+                    }
+                    if(isInternetAvailable()){
+                        loadFromApi(showId);
+                    }else{
+                        getFromDB(showId);
+                    }
+
+
+                }
+            }));
+            floatingActionButton.setImageResource(R.drawable.ic_grid_view);
+        }
     }
 
     private void getFromDB(final String showId) {
@@ -152,6 +203,7 @@ public class ShowSelectFragment extends Fragment {
             public void onResponse(Call<ResponseData<ApiShowDescription>> call, Response<ResponseData<ApiShowDescription>> response) {
                 if (response.isSuccessful()){
                     ApplicationShows.getShow(showId).setDescription(response.body().getData().getDescription());
+                    ApplicationShows.getShow(showId).setLikesCount(response.body().getData().getLikesCOunt());
                     ApiServiceFactory.get().getEpisodes(showId).enqueue(new Callback<ResponseData<List<ApiEpisode>>>() {
                         @Override
                         public void onResponse(Call<ResponseData<List<ApiEpisode>>> call, Response<ResponseData<List<ApiEpisode>>> response) {
@@ -197,13 +249,22 @@ public class ShowSelectFragment extends Fragment {
             try{
                 Integer.valueOf(episode.getEpisodeNumber());
                 Integer.valueOf(episode.getSeasonNumber());
-                return true;
+                return checkNumbers(Integer.valueOf(episode.getEpisodeNumber()), Integer.valueOf(episode.getSeasonNumber()));
             }catch (Exception e){
                 return false;
             }
         }
         return false;
     }
+
+    private boolean checkNumbers(int episode, int season) {
+        if (1<=episode && episode<=99 && 1<=season && season<=20) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
     protected void showError(String text) {
         new AlertDialog.Builder(getActivity())
