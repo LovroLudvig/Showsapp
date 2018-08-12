@@ -38,6 +38,7 @@ import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -215,6 +216,7 @@ public class ShowSelectFragment extends Fragment {
                                         ApplicationShows.addEpisodeToShow(new Episode(episode.getId(),showId, episode.getName(), episode.getDescription(), episode.getEpisodeNumber(), episode.getSeasonNumber(), episode.getPicture()), showId);
                                     }
                                 }
+                                Collections.sort(ApplicationShows.getShow(showId).getEpisodes());
                                 insertIntoDb(showId);
                             }else{
                                 hideProgress();

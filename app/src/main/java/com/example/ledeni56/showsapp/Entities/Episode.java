@@ -10,8 +10,11 @@ import android.support.annotation.NonNull;
 
 import com.squareup.moshi.Json;
 
+import java.util.Comparator;
+import java.util.concurrent.CompletionException;
+
 @Entity
-public class Episode implements Parcelable{
+public class Episode implements Parcelable, Comparable<Episode>{
     @PrimaryKey
     @NonNull
     private String id;
@@ -37,6 +40,7 @@ public class Episode implements Parcelable{
         this.seasonNumber=seasonNumber;
         this.picture=picture;
     }
+
     public Episode(String id,String ownerId, String name, String description, String episodeNumber, String seasonNumber, String picture){
         this.id=id;
         this.ownerId=ownerId;
@@ -46,8 +50,6 @@ public class Episode implements Parcelable{
         this.seasonNumber=Integer.valueOf(seasonNumber);
         this.picture="https://api.infinum.academy"+picture;
     }
-
-
 
     protected Episode(Parcel in) {
         name = in.readString();
@@ -112,7 +114,6 @@ public class Episode implements Parcelable{
         return name;
     }
 
-
     public int getSeasonNumber() {
         return seasonNumber;
     }
@@ -120,4 +121,29 @@ public class Episode implements Parcelable{
     public int getEpisodeNumber() {
         return episodeNumber;
     }
+
+    public static Comparator<Episode> comparatorBySeason= new Comparator<Episode>() {
+        @Override
+        public int compare(Episode episode1, Episode episode2) {
+            return episode1.getSeasonNumber()-episode2.getSeasonNumber();
+        }
+    };
+
+    public static Comparator<Episode> comparatorByEpisode= new Comparator<Episode>() {
+        @Override
+        public int compare(Episode episode1, Episode episode2) {
+            return episode1.getEpisodeNumber()-episode2.getEpisodeNumber();
+        }
+    };
+
+    @Override
+    public int compareTo(@NonNull Episode otherEpisode) {
+        int i=Integer.compare(seasonNumber, otherEpisode.getSeasonNumber());
+        if (i!=0){
+            return i;
+        } else {
+            return Integer.compare(episodeNumber, otherEpisode.getEpisodeNumber());
+        }
+    }
+
 }

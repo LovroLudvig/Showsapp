@@ -5,28 +5,32 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.ledeni56.showsapp.Entities.Episode;
-import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.Fragments.EpisodeSelectFragment;
 import com.example.ledeni56.showsapp.R;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
-    private final List<Episode> episodes;
+    private ArrayList<Episode> episodes;
     private String showName;
-    private Show show;
 
     private EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener;
 
-    public EpisodesAdapter(Show show, EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener) {
-        this.show=show;
-        this.episodes=show.getEpisodes();
-        this.showName=show.getName();
+    public EpisodesAdapter(ArrayList<Episode> episodes,int from,int to,String showName,EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener) {
+        if (from==0 && to==0) {
+            this.episodes = episodes;
+        }else {
+            this.episodes=new ArrayList<>();
+            for (int i=from;i<to;i++){
+                if (i<episodes.size()){
+                    this.episodes.add(episodes.get(i));
+                }
+            }
+        }
+        this.showName=showName;
         this.listener=listener;
     }
 

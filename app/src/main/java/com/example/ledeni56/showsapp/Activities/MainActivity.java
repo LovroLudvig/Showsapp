@@ -60,9 +60,9 @@ public class MainActivity extends BasicActivity implements ToolbarProvider {
     @Override
     protected void onResume() {
         super.onResume();
-        if (fragmentManager.getBackStackEntryCount()>1){
-            getToolbar().setVisibility(View.GONE);
-        }
+//        if (fragmentManager.getBackStackEntryCount()>1){
+//            getToolbar().setVisibility(View.GONE);
+//        }
     }
 
     @Override

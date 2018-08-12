@@ -105,7 +105,7 @@ public class EpisodeSelectFragment extends Fragment {
         checkIfEpisodesEmpty();
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recyclerView.setAdapter(new EpisodesAdapter(show, new OnEpisodeFragmentInteractionListener() {
+        recyclerView.setAdapter(new EpisodesAdapter(show.getEpisodes(),0,0,show.getName(), new OnEpisodeFragmentInteractionListener() {
             @Override
             public void onEpisodeSelected(Episode episode) {
                 EpisodeDetailsFragment episodeDetailsFragment = EpisodeDetailsFragment.newInstance(episode,show);
