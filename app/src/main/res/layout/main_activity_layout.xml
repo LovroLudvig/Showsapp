@@ -11,17 +11,15 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/Toolbar"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
+        android:layout_height="68dp"
+        android:background="#FFF7F9"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/main_title"
-        app:titleTextColor="@color/white" />
-
-
+        app:titleTextAppearance="@style/Toolbar.TitleText"
+        />
         <FrameLayout
-            android:id="@+id/frameLayoutRight"
+            android:id ="@+id/frameLayoutRight"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></FrameLayout>
 </LinearLayout>

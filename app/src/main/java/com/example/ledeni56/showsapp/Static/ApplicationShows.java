@@ -10,13 +10,13 @@ public class ApplicationShows {
 
     static {
         //creating harcoded shows
-        shows.add(new Show("Zabranjena ljubav"));
-        shows.add(new Show("Ljubav je na selu"));
-        shows.add(new Show("Gossip Girl"));
-        shows.add(new Show("Pokemon"));
-        shows.add(new Show("Naruto"));
-        shows.add(new Show("Seks i grad"));
-        shows.add(new Show("Vampirski dnevnici"));
+//        shows.add(new Show("Zabranjena ljubav"));
+//        shows.add(new Show("Ljubav je na selu"));
+//        shows.add(new Show("Gossip Girl"));
+//        shows.add(new Show("Pokemon"));
+//        shows.add(new Show("Naruto"));
+//        shows.add(new Show("Seks i grad"));
+//        shows.add(new Show("Vampirski dnevnici"));
 
         //shows.get(0).addEpisode(new Episode("test name", "test description", 1, 1, Uri.parse("http://halobing.net/serije/slike/zabranjenaljubav1.jpg" ) ));
 
@@ -26,36 +26,42 @@ public class ApplicationShows {
         return shows;
     }
 
-    public static boolean addEpisodeToShow(Episode ep, int id){
+    public static void addShow(Show show){
+        if (!shows.contains(show)){
+            shows.add(show);
+        }
+    }
+
+    public static boolean addEpisodeToShow(Episode ep, String id){
         for (Show show:shows){
-            if (show.getID()==id){
+            if (show.getId().equals(id)){
                 return show.addEpisode(ep);
             }
         }
         return false;
     }
 
-    public static ArrayList<Episode> showEpisodes(int id){
+    public static ArrayList<Episode> showEpisodes(String id){
         for (Show show:shows){
-            if (show.getID()==id){
+            if (show.getId().equals(id)){
                 return show.getEpisodes();
             }
         }
         return new ArrayList<>();
     }
 
-    public static Show getShow(int id){
+    public static Show getShow(String id){
         for (Show show:shows){
-            if (show.getID()==id){
+            if (show.getId().equals(id)){
                 return show;
             }
         }
         return null;
     }
 
-    public static boolean nameExists(String name, int id) {
+    public static boolean nameExists(String name, String id) {
         for (Show show:shows){
-            if (show.getID()==id){
+            if (show.getId().equals(id)){
                 for (Episode ep:show.getEpisodes()){
                     if (ep.getName().equals(name)){
                         return true;

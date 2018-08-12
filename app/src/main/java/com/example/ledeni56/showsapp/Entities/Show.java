@@ -1,28 +1,56 @@
 package com.example.ledeni56.showsapp.Entities;
 
 
+
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
+@Entity
 public class Show {
-    private static int counter=0;
-
-    private int id;
+    @PrimaryKey
+    @NonNull
+    private String id;
+    @ColumnInfo(name = "name")
     private String name;
-    private ArrayList<Episode> episodes;
+    @ColumnInfo(name = "description")
+    private String description;
+    @Ignore
+    private ArrayList<Episode> episodes= new ArrayList<>();
+    @ColumnInfo(name = "pictureUrl")
+    private String pictureUrl;
 
 
-    public Show(String name){
-        this.id=counter++;
+
+    public Show(String id, String name,String description, String pictureUrl){
+        this.id=id;
         this.name=name;
-        this.episodes=new ArrayList<>();
+        this.description=description;
+        this.pictureUrl ="https://api.infinum.academy"+pictureUrl;
     }
 
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
 
     public String getName() {
         return name;
     }
 
-    public int getID() {
+    public String getId() {
         return id;
     }
 
@@ -33,7 +61,7 @@ public class Show {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Show) {
-            return this.id==((Show) obj).getID();
+            return this.id.equals(((Show) obj).getId());
         }else{
             return false;
         }

@@ -33,6 +33,8 @@ import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.R;
 import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
 
+import java.util.UUID;
+
 import static android.view.View.GONE;
 
 
@@ -41,7 +43,7 @@ public class AddEpisodeFragment extends Fragment {
     private static final int REQUEST_CODE_PERMISSION=1;
     private static final int REQUEST_CODE_PICTURE = 2;
 
-    private int showId;
+    private String showId;
     private Show show;
     private Uri episodeUriPicture=null;
 
@@ -147,6 +149,12 @@ public class AddEpisodeFragment extends Fragment {
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        toolbar.setVisibility(GONE);
+    }
+
     private void setMyToolbar() {
         toolbar=listener.getToolbar();
         toolbar.getMenu().clear();
@@ -164,11 +172,13 @@ public class AddEpisodeFragment extends Fragment {
 
     private boolean addEpisode() {
         addedEpisode=new Episode(
+                UUID.randomUUID().toString(),
+                showId,
                 episodeNameView.getText().toString(),
                 episodeDescriptionView.getText().toString(),
                 episodeNumber,
                 seasonNumber,
-                episodeUriPicture
+                episodeUriPicture.toString()
         );
 
         if (ApplicationShows.addEpisodeToShow(addedEpisode, showId)){
@@ -229,10 +239,10 @@ public class AddEpisodeFragment extends Fragment {
         }
     }
 
-    public static AddEpisodeFragment newInstance(int showId) {
+    public static AddEpisodeFragment newInstance(String showId) {
         AddEpisodeFragment fragment = new AddEpisodeFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_NUMBER, showId);
+        args.putString(ARG_NUMBER, showId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -241,7 +251,7 @@ public class AddEpisodeFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            showId = getArguments().getInt(ARG_NUMBER);
+            showId = getArguments().getString(ARG_NUMBER);
         }
     }
 
@@ -271,6 +281,12 @@ public class AddEpisodeFragment extends Fragment {
             ((InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE)).
                     hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     @Override

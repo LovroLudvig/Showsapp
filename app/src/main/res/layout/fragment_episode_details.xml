@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EpisodeDetails"
     android:orientation="vertical"
     android:background="#FFF7F9">
 
@@ -14,6 +13,10 @@
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:scaleType="centerCrop"/>
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -47,6 +50,7 @@
                 android:textStyle="bold"
                 android:padding="5dp"/>
         </LinearLayout>
+        </ScrollView>
 
 
 </LinearLayout>

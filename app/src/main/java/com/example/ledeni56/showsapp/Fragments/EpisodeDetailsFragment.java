@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +18,8 @@ import com.example.ledeni56.showsapp.Entities.Episode;
 import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.R;
 import com.example.ledeni56.showsapp.Interfaces.ToolbarProvider;
+
+import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
 
 public class EpisodeDetailsFragment extends Fragment{
@@ -47,6 +50,7 @@ public class EpisodeDetailsFragment extends Fragment{
         episodeDescription=view.findViewById(R.id.episodeDescription);
         episodeNumber=view.findViewById(R.id.episodeNumber);
 
+        OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
         setMyToolbar();
 
         Glide.with(this).load(episode.getPicture()).into(episodePicture);
@@ -68,6 +72,13 @@ public class EpisodeDetailsFragment extends Fragment{
             }
         });
         toolbar.getMenu().findItem(R.id.action_add).setVisible(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        toolbar=listener.getToolbar();
+        toolbar.setVisibility(View.VISIBLE);
     }
 
     public static EpisodeDetailsFragment newInstance(Episode episode, Show show) {
@@ -93,6 +104,7 @@ public class EpisodeDetailsFragment extends Fragment{
     @Override
     public void onDetach() {
         super.onDetach();
+        toolbar.setVisibility(View.GONE);
         toolbar.getMenu().findItem(R.id.action_add).setVisible(true);
     }
 

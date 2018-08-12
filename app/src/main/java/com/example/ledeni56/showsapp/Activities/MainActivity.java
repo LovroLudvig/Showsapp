@@ -2,7 +2,6 @@ package com.example.ledeni56.showsapp.Activities;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.example.ledeni56.showsapp.Fragments.AddEpisodeFragment;
 import com.example.ledeni56.showsapp.Fragments.ShowSelectFragment;
@@ -19,7 +19,6 @@ import com.example.ledeni56.showsapp.R;
 public class MainActivity extends BasicActivity implements ToolbarProvider {
     public static final String TOKEN_KEY = "token key";
     public static final String PREFS_NAME = "prefs name";
-    private Toolbar myToolbar;
     private FragmentManager fragmentManager;
     private static boolean closeDialog=false;
     private String userToken;
@@ -29,9 +28,9 @@ public class MainActivity extends BasicActivity implements ToolbarProvider {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity_layout);
         fragmentManager = getSupportFragmentManager();
-        setMyActionBar();
 
         setUserToken();
+
 
         if (fragmentManager.findFragmentById(R.id.frameLayoutRight)==null){
             ShowSelectFragment showSelectFragment = new ShowSelectFragment();
@@ -39,7 +38,10 @@ public class MainActivity extends BasicActivity implements ToolbarProvider {
             fragmentTransaction.add(R.id.frameLayoutRight,showSelectFragment);
             fragmentTransaction.commit();
         }
+
     }
+
+
 
     private void setUserToken() {
         if (getIntent().getExtras()!=null){
@@ -55,11 +57,12 @@ public class MainActivity extends BasicActivity implements ToolbarProvider {
         }
     }
 
-    private void setMyActionBar() {
-        myToolbar = findViewById(R.id.Toolbar);
-        myToolbar.getMenu().clear();
-        myToolbar.setNavigationIcon(null);
-        myToolbar.setTitle("Shows");
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (fragmentManager.getBackStackEntryCount()>1){
+            getToolbar().setVisibility(View.GONE);
+        }
     }
 
     @Override

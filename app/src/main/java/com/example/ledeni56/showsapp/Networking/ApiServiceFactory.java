@@ -7,7 +7,6 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 
-
 public class ApiServiceFactory {
     private static final String BASE_URL = "https://api.infinum.academy";
     private static ApiService apiService;
