@@ -1,7 +1,6 @@
 package com.example.ledeni56.showsapp.Entities;
 
 
-
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
@@ -20,21 +19,19 @@ public class Show {
     @ColumnInfo(name = "description")
     private String description;
     @Ignore
-    private ArrayList<Episode> episodes= new ArrayList<>();
+    private ArrayList<Episode> episodes = new ArrayList<>();
     @ColumnInfo(name = "pictureUrl")
     private String pictureUrl;
     @ColumnInfo(name = "likesCount")
     private int likesCount;
 
 
-
-
-    public Show(String id, String name,String description, String pictureUrl, int likesCount){
-        this.id=id;
-        this.name=name;
-        this.description=description;
-        this.pictureUrl ="https://api.infinum.academy"+pictureUrl;
-        this.likesCount=likesCount;
+    public Show(String id, String name, String description, String pictureUrl, int likesCount) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.pictureUrl = "https://api.infinum.academy" + pictureUrl;
+        this.likesCount = likesCount;
     }
 
 
@@ -74,18 +71,17 @@ public class Show {
     public boolean equals(Object obj) {
         if (obj instanceof Show) {
             return this.id.equals(((Show) obj).getId());
-        }else{
+        } else {
             return false;
         }
     }
 
 
     //adds an episode if one doesn't already exist with the same episode number and season number
-    public boolean addEpisode(Episode episode){
-        if (episodes.contains(episode)){
+    public boolean addEpisode(Episode episode) {
+        if (episodes.contains(episode)) {
             return false;
-        }
-        else{
+        } else {
             episodes.add(episode);
             return true;
         }

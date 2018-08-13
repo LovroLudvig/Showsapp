@@ -14,7 +14,7 @@ import java.util.Comparator;
 import java.util.concurrent.CompletionException;
 
 @Entity
-public class Episode implements Parcelable, Comparable<Episode>{
+public class Episode implements Parcelable, Comparable<Episode> {
     @PrimaryKey
     @NonNull
     private String id;
@@ -31,24 +31,24 @@ public class Episode implements Parcelable, Comparable<Episode>{
     @ColumnInfo(name = "picture")
     private String picture;
 
-    public Episode(String id,String ownerId, String name, String description, int episodeNumber, int seasonNumber, String picture){
-        this.id=id;
-        this.ownerId=ownerId;
-        this.name=name;
-        this.description=description;
-        this.episodeNumber=episodeNumber;
-        this.seasonNumber=seasonNumber;
-        this.picture=picture;
+    public Episode(String id, String ownerId, String name, String description, int episodeNumber, int seasonNumber, String picture) {
+        this.id = id;
+        this.ownerId = ownerId;
+        this.name = name;
+        this.description = description;
+        this.episodeNumber = episodeNumber;
+        this.seasonNumber = seasonNumber;
+        this.picture = picture;
     }
 
-    public Episode(String id,String ownerId, String name, String description, String episodeNumber, String seasonNumber, String picture){
-        this.id=id;
-        this.ownerId=ownerId;
-        this.name=name;
-        this.description=description;
-        this.episodeNumber=Integer.valueOf(episodeNumber);
-        this.seasonNumber=Integer.valueOf(seasonNumber);
-        this.picture="https://api.infinum.academy"+picture;
+    public Episode(String id, String ownerId, String name, String description, String episodeNumber, String seasonNumber, String picture) {
+        this.id = id;
+        this.ownerId = ownerId;
+        this.name = name;
+        this.description = description;
+        this.episodeNumber = Integer.valueOf(episodeNumber);
+        this.seasonNumber = Integer.valueOf(seasonNumber);
+        this.picture = "https://api.infinum.academy" + picture;
     }
 
     protected Episode(Parcel in) {
@@ -61,9 +61,9 @@ public class Episode implements Parcelable, Comparable<Episode>{
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof Episode){
-            return this.episodeNumber==((Episode) obj).getEpisodeNumber() && this.seasonNumber==((Episode) obj).getSeasonNumber();
-        } else{
+        if (obj instanceof Episode) {
+            return this.episodeNumber == ((Episode) obj).getEpisodeNumber() && this.seasonNumber == ((Episode) obj).getSeasonNumber();
+        } else {
             return false;
         }
     }
@@ -122,24 +122,10 @@ public class Episode implements Parcelable, Comparable<Episode>{
         return episodeNumber;
     }
 
-    public static Comparator<Episode> comparatorBySeason= new Comparator<Episode>() {
-        @Override
-        public int compare(Episode episode1, Episode episode2) {
-            return episode1.getSeasonNumber()-episode2.getSeasonNumber();
-        }
-    };
-
-    public static Comparator<Episode> comparatorByEpisode= new Comparator<Episode>() {
-        @Override
-        public int compare(Episode episode1, Episode episode2) {
-            return episode1.getEpisodeNumber()-episode2.getEpisodeNumber();
-        }
-    };
-
     @Override
     public int compareTo(@NonNull Episode otherEpisode) {
-        int i=Integer.compare(seasonNumber, otherEpisode.getSeasonNumber());
-        if (i!=0){
+        int i = Integer.compare(seasonNumber, otherEpisode.getSeasonNumber());
+        if (i != 0) {
             return i;
         } else {
             return Integer.compare(episodeNumber, otherEpisode.getEpisodeNumber());

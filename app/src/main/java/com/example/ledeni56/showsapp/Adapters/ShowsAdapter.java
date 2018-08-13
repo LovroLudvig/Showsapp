@@ -25,25 +25,21 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
     private int flag;
 
     public ShowsAdapter(List<Show> shows, int i, ShowSelectFragment.OnShowFragmentInteractionListener listener) {
-            this.shows = shows;
-            this.listener=listener;
-            this.flag=i;
-        }
+        this.shows = shows;
+        this.listener = listener;
+        this.flag = i;
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-        if (flag==1){
+        if (flag == 1) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows_grid, parent, false);
-        }else{
+        } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows, parent, false);
         }
         return new ViewHolder(view);
-    }
-
-    public int getFlag() {
-        return flag;
     }
 
     @Override
@@ -53,9 +49,8 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
 
 
         final Show show = shows.get(position);
-        final Context context=holder.itemView.getContext();
+        final Context context = holder.itemView.getContext();
 
-      
 
         textView.setText(show.getName());
         Glide.with(context).load(Uri.parse(show.getPictureUrl())).into(imageView);
@@ -64,14 +59,14 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 listener.onShowSelected(show.getId());
-                }
-            });
-        }
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
-            return shows.size();
-        }
+        return shows.size();
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 

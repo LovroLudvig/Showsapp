@@ -6,7 +6,7 @@ import android.os.Looper;
 
 import com.example.ledeni56.showsapp.Entities.DislikedShow;
 
-public class DeleteDislikedShowRunnable implements Runnable{
+public class DeleteDislikedShowRunnable implements Runnable {
     private final DatabaseCallback<Void> callback;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());

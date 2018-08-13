@@ -10,8 +10,8 @@ public class LikedShow {
     @NonNull
     private String id;
 
-    public LikedShow(String id){
-        this.id=id;
+    public LikedShow(String id) {
+        this.id = id;
     }
 
     @NonNull

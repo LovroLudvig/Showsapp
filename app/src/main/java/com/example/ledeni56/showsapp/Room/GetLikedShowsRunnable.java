@@ -10,7 +10,7 @@ import com.example.ledeni56.showsapp.Entities.LikedShow;
 import java.util.List;
 
 
-public class GetLikedShowsRunnable implements  Runnable {
+public class GetLikedShowsRunnable implements Runnable {
     private final DatabaseCallback<List<LikedShow>> callback;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());

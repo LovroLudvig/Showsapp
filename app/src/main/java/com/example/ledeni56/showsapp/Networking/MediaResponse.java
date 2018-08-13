@@ -1,4 +1,5 @@
 package com.example.ledeni56.showsapp.Networking;
+
 import com.squareup.moshi.Json;
 
 public class MediaResponse {

@@ -19,7 +19,7 @@ public class ShowsAppRepository {
     private ExecutorService executor;
     private Future task;
 
-    public static ShowsAppRepository get(Context context){
+    public static ShowsAppRepository get(Context context) {
         return new ShowsAppRepository(context);
     }
 

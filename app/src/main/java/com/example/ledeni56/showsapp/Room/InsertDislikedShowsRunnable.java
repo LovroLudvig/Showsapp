@@ -8,7 +8,7 @@ import android.os.Looper;
 import com.example.ledeni56.showsapp.Entities.DislikedShow;
 import com.example.ledeni56.showsapp.Entities.LikedShow;
 
-public class InsertDislikedShowsRunnable implements Runnable{
+public class InsertDislikedShowsRunnable implements Runnable {
     private final DatabaseCallback<Void> callback;
     private final Context context;
     private final Handler mainHandler = new Handler(Looper.getMainLooper());

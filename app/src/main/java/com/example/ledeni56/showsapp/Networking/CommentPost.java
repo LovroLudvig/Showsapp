@@ -8,8 +8,8 @@ public class CommentPost {
     @Json(name = "episodeId")
     private String episodeId;
 
-    public CommentPost(String text, String episodeId){
-        this.text=text;
-        this.episodeId=episodeId;
+    public CommentPost(String text, String episodeId) {
+        this.text = text;
+        this.episodeId = episodeId;
     }
 }

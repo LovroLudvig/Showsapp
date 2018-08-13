@@ -17,13 +17,13 @@ public class EpisodeUpload {
     @Json(name = "season")
     private String season;
 
-    public EpisodeUpload(String showId, String mediaId, String title, String description, String episodeNumber, String season){
-        this.showId=showId;
-        this.mediaId=mediaId;
-        this.title=title;
-        this.description=description;
-        this.episodeNumber=episodeNumber;
-        this.season=season;
+    public EpisodeUpload(String showId, String mediaId, String title, String description, String episodeNumber, String season) {
+        this.showId = showId;
+        this.mediaId = mediaId;
+        this.title = title;
+        this.description = description;
+        this.episodeNumber = episodeNumber;
+        this.season = season;
     }
 
 }

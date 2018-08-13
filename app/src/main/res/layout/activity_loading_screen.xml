@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.ledeni56.showsapp.Activities.LoadingScreenActivity"
     android:background="#FFF7F9"
     android:orientation="vertical"
-    >
+    tools:context="com.example.ledeni56.showsapp.Activities.LoadingScreenActivity">
+
     <Space
         android:id="@+id/spaceCenter"
         android:layout_width="wrap_content"
         android:layout_height="150dp"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true" />
 
     <ImageView
         android:id="@+id/logoImage"
@@ -21,21 +21,23 @@
         android:layout_centerHorizontal="true"
         android:scaleType="center"
         android:src="@drawable/ic_logo" />
+
     <TextView
         android:id="@+id/showText"
         android:layout_width="wrap_content"
         android:layout_height="60dp"
-        android:text="Shows"
-        android:textSize="0dp"
-        android:visibility="invisible"
-        android:textStyle="bold"
-        android:textColor="#000"
         android:layout_below="@+id/spaceCenter"
-        android:layout_centerInParent="true"/>
+        android:layout_centerInParent="true"
+        android:text="Shows"
+        android:textColor="#000"
+        android:textSize="0dp"
+        android:textStyle="bold"
+        android:visibility="invisible" />
+
     <ProgressBar
+        android:id="@+id/progressBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/showText"
-        android:layout_centerInParent="true"
-        android:id="@+id/progressBar" />
+        android:layout_centerInParent="true" />
 </RelativeLayout>

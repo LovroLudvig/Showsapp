@@ -9,8 +9,8 @@ public class UserLogin {
     @Json(name = "password")
     private String password;
 
-    public UserLogin(String mail, String pass){
-        email=mail;
-        password=pass;
+    public UserLogin(String mail, String pass) {
+        email = mail;
+        password = pass;
     }
 }

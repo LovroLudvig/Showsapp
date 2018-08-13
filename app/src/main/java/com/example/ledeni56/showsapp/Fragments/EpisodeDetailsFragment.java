@@ -26,8 +26,10 @@ import com.example.ledeni56.showsapp.Static.ApplicationShows;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
 
+import static android.view.View.GONE;
 
-public class EpisodeDetailsFragment extends Fragment{
+
+public class EpisodeDetailsFragment extends Fragment {
 
     private static final String ARG_EPISODE = "arg episode";
     private static final String ARG_SHOW_ID = "arg id";
@@ -44,55 +46,65 @@ public class EpisodeDetailsFragment extends Fragment{
     private Show show;
     private RecyclerView recycleView;
     private FragmentManager fragmentManager;
+    private TextView otherEpisodesText;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_episode_details,container,false);
+        return inflater.inflate(R.layout.fragment_episode_details, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        episodePicture=view.findViewById(R.id.episodePicture);
-        episodeTitle=view.findViewById(R.id.episodeTitle);
-        episodeDescription=view.findViewById(R.id.episodeDescription);
-        episodeNumber=view.findViewById(R.id.episodeNumber);
-        commentsView=view.findViewById(R.id.commentsView);
-        recycleView=view.findViewById(R.id.fiveEpisodes);
+        episodePicture = view.findViewById(R.id.episodePicture);
+        episodeTitle = view.findViewById(R.id.episodeTitle);
+        episodeDescription = view.findViewById(R.id.episodeDescription);
+        episodeNumber = view.findViewById(R.id.episodeNumber);
+        commentsView = view.findViewById(R.id.commentsView);
+        recycleView = view.findViewById(R.id.fiveEpisodes);
+        otherEpisodesText=view.findViewById(R.id.otherEpisodesText);
 
-        fragmentManager=getFragmentManager();
+        fragmentManager = getFragmentManager();
 
-        recycleView.setLayoutManager(new LinearLayoutManager(getContext()));
-        recycleView.setAdapter(new EpisodesAdapter(show.getEpisodes(),show.getEpisodes().indexOf(episode)+1,show.getEpisodes().indexOf(episode)+6,show.getName(), new EpisodeSelectFragment.OnEpisodeFragmentInteractionListener() {
-            @Override
-            public void onEpisodeSelected(Episode episode) {
-                EpisodeDetailsFragment episodeDetailsFragment = EpisodeDetailsFragment.newInstance(episode,show);
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_down,R.anim.exit_down,R.anim.enter_down,R.anim.exit_down).replace(R.id.frameLayoutRight,episodeDetailsFragment).addToBackStack("details").commit();
-            }
-        }));
+        initRecycle();
+        initCommentsView();
+        //OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
+        setMyToolbar();
+        Glide.with(this).load(episode.getPicture()).into(episodePicture);
+        episodeTitle.setText(episode.getName());
+        episodeDescription.setText(episode.getDescription());
+        episodeNumber.setText("Season " + episode.getSeasonNumber() + ", Ep " + episode.getEpisodeNumber());
+    }
 
+    private void initCommentsView() {
         commentsView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 EpisodeCommentsFragment episodeCommentsFragment = EpisodeCommentsFragment.newInstance(episode);
-                FragmentManager fragmentManager=getFragmentManager();
-                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_down,R.anim.exit_down,R.anim.enter_down,R.anim.exit_down).replace(R.id.frameLayoutRight,episodeCommentsFragment).addToBackStack("comments").commit();
+                FragmentManager fragmentManager = getFragmentManager();
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_down, R.anim.exit_down, R.anim.enter_down, R.anim.exit_down).replace(R.id.frameLayoutRight, episodeCommentsFragment).addToBackStack("comments").commit();
 
             }
         });
+    }
 
-        //OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
-        setMyToolbar();
-
-        Glide.with(this).load(episode.getPicture()).into(episodePicture);
-        episodeTitle.setText(episode.getName());
-        episodeDescription.setText(episode.getDescription());
-        episodeNumber.setText("Season "+episode.getSeasonNumber()+", Ep "+episode.getEpisodeNumber());
+    private void initRecycle() {
+        recycleView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycleView.setAdapter(new EpisodesAdapter(show.getEpisodes(), show.getEpisodes().indexOf(episode) + 1, show.getEpisodes().indexOf(episode) + 6, show.getName(), new EpisodeSelectFragment.OnEpisodeFragmentInteractionListener() {
+            @Override
+            public void onEpisodeSelected(Episode episode) {
+                EpisodeDetailsFragment episodeDetailsFragment = EpisodeDetailsFragment.newInstance(episode, show);
+                fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter_down, R.anim.exit_down, R.anim.enter_down, R.anim.exit_down).replace(R.id.frameLayoutRight, episodeDetailsFragment).addToBackStack("details").commit();
+            }
+        }));
+        if ((show.getEpisodes().indexOf(episode) + 1)>=show.getEpisodes().size()){
+            otherEpisodesText.setVisibility(View.GONE);
+        }
     }
 
     private void setMyToolbar() {
-        toolbar=listener.getToolbar();
+        toolbar = listener.getToolbar();
         toolbar.getMenu().clear();
         toolbar.setTitle(showName);
 //        toolbar.inflateMenu(R.menu.menu_episode);
@@ -109,7 +121,7 @@ public class EpisodeDetailsFragment extends Fragment{
     @Override
     public void onResume() {
         super.onResume();
-        toolbar=listener.getToolbar();
+        toolbar = listener.getToolbar();
         toolbar.setVisibility(View.VISIBLE);
     }
 
@@ -133,20 +145,20 @@ public class EpisodeDetailsFragment extends Fragment{
         }
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
+//    @Override
+//    public void onDetach() {
+//        super.onDetach();
 //        toolbar.setVisibility(View.GONE);
 //        toolbar.getMenu().findItem(R.id.action_add).setVisible(true);
-    }
+//    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             episode = getArguments().getParcelable(ARG_EPISODE);
-            show= ApplicationShows.getShow(getArguments().getString(ARG_SHOW_ID));
-            showName=show.getName();
+            show = ApplicationShows.getShow(getArguments().getString(ARG_SHOW_ID));
+            showName = show.getName();
         }
     }
 }

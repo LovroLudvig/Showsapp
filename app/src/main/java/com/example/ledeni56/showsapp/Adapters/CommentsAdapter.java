@@ -13,11 +13,11 @@ import com.example.ledeni56.showsapp.R;
 import java.util.List;
 
 
-public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder>  {
+public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHolder> {
     private List<Comment> comments;
 
     public CommentsAdapter(List<Comment> comments) {
-        this.comments=comments;
+        this.comments = comments;
     }
 
     @NonNull
@@ -30,7 +30,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<CommentsAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         TextView username = holder.itemView.findViewById(R.id.usernameView);
-        TextView commentText= holder.itemView.findViewById(R.id.commentText);
+        TextView commentText = holder.itemView.findViewById(R.id.commentText);
 
         Comment comment = comments.get(position);
         username.setText(comment.getUserEmail());

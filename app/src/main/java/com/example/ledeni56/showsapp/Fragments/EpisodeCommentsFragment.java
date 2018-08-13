@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.example.ledeni56.showsapp.Activities.BasicActivity;
 import com.example.ledeni56.showsapp.Activities.MainActivity;
 import com.example.ledeni56.showsapp.Adapters.CommentsAdapter;
 import com.example.ledeni56.showsapp.Entities.Comment;
@@ -50,42 +52,60 @@ public class EpisodeCommentsFragment extends Fragment {
     private ProgressDialog progressDialog;
     private EditText commentEditText;
     private ShowsAppRepository showsAppRepository;
+    private BasicActivity activity;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_episode_comments,container,false);
+        return inflater.inflate(R.layout.fragment_episode_comments, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setMyToolbar();
-        recyclerView=view.findViewById(R.id.commentsRecyclerView);
-        emptyState=view.findViewById(R.id.emptyState);
-        postButton=view.findViewById(R.id.postButton);
-        commentEditText=view.findViewById(R.id.commentEditText);
+        recyclerView = view.findViewById(R.id.commentsRecyclerView);
+        emptyState = view.findViewById(R.id.emptyState);
+        postButton = view.findViewById(R.id.postButton);
+        commentEditText = view.findViewById(R.id.commentEditText);
+        swipeRefreshLayout=view.findViewById(R.id.swipeRefreshLayout);
 
-        if (showsAppRepository==null){
-            showsAppRepository= ShowsAppRepository.get(getActivity());
+        if (showsAppRepository == null) {
+            showsAppRepository = ShowsAppRepository.get(getActivity());
         }
 
+        initPostButton();
+        getComments();
+        initSwipeRefreshLayout();
+    }
+
+    private void initSwipeRefreshLayout() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                getComments();
+            }
+        });
+    }
+
+    private void initPostButton() {
         postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (isInternetAvailable()){
-                    if (!commentEditText.getText().toString().equals("")){
-                        showProgress();
-                        ApiServiceFactory.get().postComment(((MainActivity)getActivity()).getUserToken(), new CommentPost(commentEditText.getText().toString(),episode.getId())).enqueue(new Callback<ResponseData<Comment>>() {
+                if (activity.isInternetAvailable()) {
+                    if (!commentEditText.getText().toString().equals("")) {
+                        activity.showProgress();
+                        ApiServiceFactory.get().postComment(((MainActivity) getActivity()).getUserToken(), new CommentPost(commentEditText.getText().toString(), episode.getId())).enqueue(new Callback<ResponseData<Comment>>() {
                             @Override
                             public void onResponse(Call<ResponseData<Comment>> call, Response<ResponseData<Comment>> response) {
-                                if (response.isSuccessful()){
+                                if (response.isSuccessful()) {
                                     comments.add(response.body().getData());
                                     recyclerView.getAdapter().notifyItemInserted(comments.size() - 1);
                                     recyclerView.scrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
                                     commentEditText.setText("");
                                     checkEmpty();
-                                    hideProgress();
+                                    activity.hideProgress();
                                     showsAppRepository.insertComments(comments, new DatabaseCallback<Void>() {
                                         @Override
                                         public void onSuccess(Void data) {
@@ -97,31 +117,34 @@ public class EpisodeCommentsFragment extends Fragment {
 
                                         }
                                     });
-                                }else{
-                                    showError("Error");
-                                    hideProgress();
+                                } else {
+                                    activity.showError("Error");
+                                    activity.hideProgress();
                                 }
                             }
 
                             @Override
                             public void onFailure(Call<ResponseData<Comment>> call, Throwable t) {
-                                showError("Error");
-                                hideProgress();
+                                activity.showError("Error");
+                                activity.hideProgress();
                             }
                         });
                     }
-                }else{
+                } else {
                     Toast.makeText(getActivity(), "Internet is not available", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-        if (isInternetAvailable()){
-            showProgress();
+    }
+
+    private void getComments() {
+        if (activity.isInternetAvailable()) {
+            swipeRefreshLayout.setRefreshing(true);
             ApiServiceFactory.get().getComments(episode.getId()).enqueue(new Callback<ResponseData<List<Comment>>>() {
                 @Override
                 public void onResponse(Call<ResponseData<List<Comment>>> call, Response<ResponseData<List<Comment>>> response) {
-                    if (response.isSuccessful()){
-                        comments =response.body().getData();
+                    if (response.isSuccessful()) {
+                        comments = response.body().getData();
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                         recyclerView.setAdapter(new CommentsAdapter(comments));
                         checkEmpty();
@@ -137,27 +160,28 @@ public class EpisodeCommentsFragment extends Fragment {
 
                             }
                         });
-                        hideProgress();
+                        swipeRefreshLayout.setRefreshing(false);
 
-                    }else{
-                        hideProgress();
-                        showError("Error");
+                    } else {
+                        swipeRefreshLayout.setRefreshing(false);
+                        activity.showError("Error");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseData<List<Comment>>> call, Throwable t) {
-                    hideProgress();
-                    showError("Error");
+                    swipeRefreshLayout.setRefreshing(false);
+                    activity.showError("Error");
                 }
             });
-        } else{
+        } else {
+            swipeRefreshLayout.setRefreshing(false);
             showsAppRepository.getComments(new DatabaseCallback<List<Comment>>() {
                 @Override
                 public void onSuccess(List<Comment> data) {
-                    comments=new ArrayList<>();
-                    for(Comment comment:data){
-                        if (comment.getEpisodeId().equals(episode.getId())){
+                    comments = new ArrayList<>();
+                    for (Comment comment : data) {
+                        if (comment.getEpisodeId().equals(episode.getId())) {
                             comments.add(comment);
                         }
                     }
@@ -174,20 +198,19 @@ public class EpisodeCommentsFragment extends Fragment {
                 }
             });
         }
-
     }
 
     private void checkEmpty() {
-        if (comments.size()==0){
+        if (comments.size() == 0) {
             emptyState.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             emptyState.setVisibility(View.GONE);
         }
     }
 
 
     private void setMyToolbar() {
-        toolbar=listener.getToolbar();
+        toolbar = listener.getToolbar();
         toolbar.getMenu().clear();
         toolbar.setTitle("Comments");
         toolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
@@ -205,24 +228,6 @@ public class EpisodeCommentsFragment extends Fragment {
         toolbar.setVisibility(View.VISIBLE);
     }
 
-    private void showProgress() {
-        progressDialog = ProgressDialog.show(getActivity(), "Please wait", "Loading...", true, false);
-    }
-
-    private void hideProgress() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
-    }
-
-    protected void showError(String text) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Error!")
-                .setMessage(text)
-                .setPositiveButton("OK", null)
-                .create()
-                .show();
-    }
 
     public static EpisodeCommentsFragment newInstance(Episode episode) {
         EpisodeCommentsFragment fragment = new EpisodeCommentsFragment();
@@ -241,6 +246,7 @@ public class EpisodeCommentsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement ToolbarProvider");
         }
+        activity = (BasicActivity) context;
     }
 
 
@@ -250,14 +256,5 @@ public class EpisodeCommentsFragment extends Fragment {
         if (getArguments() != null) {
             episode = getArguments().getParcelable(ARG_EPISODE);
         }
-    }
-    private boolean isInternetAvailable() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        if (connectivityManager == null) {
-            return false;
-        }
-
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        return networkInfo != null && networkInfo.isConnected();
     }
 }

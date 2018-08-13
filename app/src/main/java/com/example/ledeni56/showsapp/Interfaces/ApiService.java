@@ -32,23 +32,23 @@ public interface ApiService {
     Call<ResponseLogin> login(@Body UserLogin userLogin);
 
     @POST("/api/comments")
-    Call<ResponseData<Comment>> postComment(@Header ("Authorization") String token, @Body CommentPost commentPost);
+    Call<ResponseData<Comment>> postComment(@Header("Authorization") String token, @Body CommentPost commentPost);
 
     @POST("/api/users")
     Call<ResponseRegister> register(@Body UserLogin userLogin);
 
     @POST("/api/shows/{showId}/like")
-    Call<ResponseLikeDislike> likeShow(@Header ("Authorization") String token, @Path("showId") String id);
+    Call<ResponseLikeDislike> likeShow(@Header("Authorization") String token, @Path("showId") String id);
 
     @POST("/api/episodes")
-    Call<ResponseData<ApiEpisode>> uploadEpisode(@Header ("Authorization") String token, @Body EpisodeUpload episodeUpload);
+    Call<ResponseData<ApiEpisode>> uploadEpisode(@Header("Authorization") String token, @Body EpisodeUpload episodeUpload);
 
     @POST("/api/media")
     @Multipart
     Call<ResponseData<MediaResponse>> uploadMedia(@Header("Authorization") String token, @Part("file\"; filename=\"image.jpg\"") RequestBody request);
 
     @POST("/api/shows/{showId}/dislike")
-    Call<ResponseLikeDislike> dislikeShow(@Header ("Authorization") String token, @Path("showId") String id);
+    Call<ResponseLikeDislike> dislikeShow(@Header("Authorization") String token, @Path("showId") String id);
 
     @GET("/api/shows")
     Call<ResponseData<List<ApiShowId>>> getShowIds();

@@ -3,7 +3,6 @@ package com.example.ledeni56.showsapp.Networking;
 import com.squareup.moshi.Json;
 
 
-
 public class ResponseLogin {
     @Json(name = "data")
     private DataLogin data;

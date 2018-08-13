@@ -6,7 +6,7 @@ import com.example.ledeni56.showsapp.Entities.Show;
 import java.util.ArrayList;
 
 public class ApplicationShows {
-    private static ArrayList<Show> shows=new ArrayList<>();
+    private static ArrayList<Show> shows = new ArrayList<>();
 
     static {
         //creating harcoded shows
@@ -26,33 +26,33 @@ public class ApplicationShows {
         return shows;
     }
 
-    public static void addShow(Show show){
-        if (!shows.contains(show)){
+    public static void addShow(Show show) {
+        if (!shows.contains(show)) {
             shows.add(show);
         }
     }
 
-    public static boolean addEpisodeToShow(Episode ep, String id){
-        for (Show show:shows){
-            if (show.getId().equals(id)){
+    public static boolean addEpisodeToShow(Episode ep, String id) {
+        for (Show show : shows) {
+            if (show.getId().equals(id)) {
                 return show.addEpisode(ep);
             }
         }
         return false;
     }
 
-    public static ArrayList<Episode> showEpisodes(String id){
-        for (Show show:shows){
-            if (show.getId().equals(id)){
+    public static ArrayList<Episode> showEpisodes(String id) {
+        for (Show show : shows) {
+            if (show.getId().equals(id)) {
                 return show.getEpisodes();
             }
         }
         return new ArrayList<>();
     }
 
-    public static Show getShow(String id){
-        for (Show show:shows){
-            if (show.getId().equals(id)){
+    public static Show getShow(String id) {
+        for (Show show : shows) {
+            if (show.getId().equals(id)) {
                 return show;
             }
         }
@@ -60,10 +60,10 @@ public class ApplicationShows {
     }
 
     public static boolean nameExists(String name, String id) {
-        for (Show show:shows){
-            if (show.getId().equals(id)){
-                for (Episode ep:show.getEpisodes()){
-                    if (ep.getName().equals(name)){
+        for (Show show : shows) {
+            if (show.getId().equals(id)) {
+                for (Episode ep : show.getEpisodes()) {
+                    if (ep.getName().equals(name)) {
                         return true;
                     }
                 }

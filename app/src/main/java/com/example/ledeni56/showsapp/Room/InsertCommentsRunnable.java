@@ -10,7 +10,6 @@ import com.example.ledeni56.showsapp.Entities.Episode;
 import java.util.List;
 
 
-
 public class InsertCommentsRunnable implements Runnable {
     private final DatabaseCallback<Void> callback;
     private final Context context;
