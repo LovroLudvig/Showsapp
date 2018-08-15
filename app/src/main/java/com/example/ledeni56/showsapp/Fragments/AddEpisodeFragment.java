@@ -290,6 +290,8 @@ public class AddEpisodeFragment extends Fragment {
         showsAppRepository.insertEpisodes(ApplicationShows.getShow(showId).getEpisodes(), new DatabaseCallback<Void>() {
             @Override
             public void onSuccess(Void data) {
+                getFragmentManager().popBackStack();
+                getFragmentManager().popBackStack();
                 EpisodeSelectFragment episodeSelectFragment = EpisodeSelectFragment.newInstance(showId);
                 fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.enter, R.anim.exit).replace(R.id.frameLayoutRight, episodeSelectFragment).addToBackStack("episode").commit();
             }
@@ -299,7 +301,6 @@ public class AddEpisodeFragment extends Fragment {
                 activity.showError("Unknown Error");
             }
         });
-        getFragmentManager().popBackStack();
     }
 
     @Override
@@ -311,7 +312,7 @@ public class AddEpisodeFragment extends Fragment {
     private void setMyToolbar() {
         toolbar = listener.getToolbar();
         toolbar.getMenu().clear();
-        toolbar.setTitle(show.getName());
+        toolbar.setTitle("Add episode");
         toolbar.inflateMenu(R.menu.menu_episode);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_white_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -351,6 +352,9 @@ public class AddEpisodeFragment extends Fragment {
             return false;
         } else if (episodeDescriptionView.getText().toString().equals("")) {
             Toast.makeText(getContext(), "Description is required", Toast.LENGTH_SHORT).show();
+            return false;
+        } else if (episodeDescriptionView.getText().toString().length()<50) {
+            Toast.makeText(getContext(), "Description length should be at least 50 characters", Toast.LENGTH_SHORT).show();
             return false;
         } else if (ApplicationShows.nameExists(episodeNameView.getText().toString(), showId)) {
             Toast.makeText(getContext(), "Name already exists, please check Title", Toast.LENGTH_SHORT).show();
@@ -485,6 +489,5 @@ public class AddEpisodeFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        toolbar.getMenu().findItem(R.id.action_add).setVisible(true);
     }
 }

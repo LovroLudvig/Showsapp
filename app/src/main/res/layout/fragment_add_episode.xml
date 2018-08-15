@@ -3,17 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFF7F9"
-    android:gravity="center"
     android:orientation="vertical">
 
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
             android:padding="15dp">
@@ -109,30 +109,23 @@
 
                     android:foregroundTint="@color/colorPrimary"
                     android:hint="Episode description"
-                    android:inputType="textCapSentences"
+                    android:inputType="textMultiLine|textCapSentences"
                     android:textColor="@color/textRegular"
                     android:textSize="16sp" />
 
             </android.support.design.widget.TextInputLayout>
-
-            <Space
-                android:id="@+id/space"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:layout_weight="1" />
-
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/colorPrimary"
-                android:text="Save"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimary"
+        android:text="Save"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
 
 </LinearLayout>
 

@@ -21,6 +21,13 @@
             android:layout_height="match_parent"
             android:background="@drawable/picture_gradient"
             android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@drawable/ic_shortcut_arrow_back"/>
     </FrameLayout>
 
     <android.support.v4.widget.NestedScrollView
@@ -41,7 +48,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingBottom="20dp"
-                android:paddingLeft="5dp"
+
                 android:textColor="@color/textRegular"
                 android:textSize="24sp"
                 tools:text="this is title" />
@@ -50,7 +57,6 @@
                 android:id="@+id/episodeNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
                 tools:text="episode 5" />
@@ -59,7 +65,8 @@
                 android:id="@+id/episodeDescription"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
                 android:textSize="16sp"
                 tools:text="description" />
 

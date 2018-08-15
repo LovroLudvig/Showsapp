@@ -214,6 +214,8 @@ public class EpisodeSelectFragment extends Fragment {
                                                 if (response.isSuccessful()) {
                                                     activity.hideProgress();
                                                     likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                                    show.setLikesCount(response.body().getLikesCount());
+                                                    saveShow();
                                                 } else {
                                                     activity.hideProgress();
                                                     activity.showError("error");
@@ -247,6 +249,8 @@ public class EpisodeSelectFragment extends Fragment {
                                     if (response.isSuccessful()) {
                                         activity.hideProgress();
                                         likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                        show.setLikesCount(response.body().getLikesCount());
+                                        saveShow();
                                     } else {
                                         activity.hideProgress();
                                         activity.showError("error");
@@ -328,6 +332,8 @@ public class EpisodeSelectFragment extends Fragment {
                                                 if (response.isSuccessful()) {
                                                     activity.hideProgress();
                                                     likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                                    show.setLikesCount(response.body().getLikesCount());
+                                                    saveShow();
                                                 } else {
                                                     activity.hideProgress();
                                                     activity.showError("error");
@@ -361,6 +367,8 @@ public class EpisodeSelectFragment extends Fragment {
                                     if (response.isSuccessful()) {
                                         activity.hideProgress();
                                         likesCount.setText(String.valueOf(response.body().getLikesCount()));
+                                        show.setLikesCount(response.body().getLikesCount());
+                                        saveShow();
                                     } else {
                                         activity.hideProgress();
                                         activity.showError("error");
@@ -412,6 +420,18 @@ public class EpisodeSelectFragment extends Fragment {
             public void onError(Throwable t) {
                 activity.hideProgress();
                 activity.showError("error");
+            }
+        });
+    }
+
+    private void saveShow() {
+        showsAppRepository.insertShows(ApplicationShows.getShows(), new DatabaseCallback<Void>() {
+            @Override
+            public void onSuccess(Void data) {
+            }
+
+            @Override
+            public void onError(Throwable t) {
             }
         });
     }

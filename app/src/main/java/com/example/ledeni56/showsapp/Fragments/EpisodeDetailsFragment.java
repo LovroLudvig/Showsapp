@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -47,6 +48,7 @@ public class EpisodeDetailsFragment extends Fragment {
     private RecyclerView recycleView;
     private FragmentManager fragmentManager;
     private TextView otherEpisodesText;
+    private ImageView backButton;
 
     @Nullable
     @Override
@@ -64,17 +66,24 @@ public class EpisodeDetailsFragment extends Fragment {
         commentsView = view.findViewById(R.id.commentsView);
         recycleView = view.findViewById(R.id.fiveEpisodes);
         otherEpisodesText=view.findViewById(R.id.otherEpisodesText);
+        backButton=view.findViewById(R.id.backButton);
 
         fragmentManager = getFragmentManager();
 
         initRecycle();
         initCommentsView();
         //OverScrollDecoratorHelper.setUpOverScroll((ScrollView) view.findViewById(R.id.scrollView));
-        setMyToolbar();
+        //setMyToolbar();
         Glide.with(this).load(episode.getPicture()).into(episodePicture);
         episodeTitle.setText(episode.getName());
         episodeDescription.setText(episode.getDescription());
         episodeNumber.setText("Season " + episode.getSeasonNumber() + ", Ep " + episode.getEpisodeNumber());
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
     }
 
     private void initCommentsView() {
@@ -118,11 +127,12 @@ public class EpisodeDetailsFragment extends Fragment {
 //        toolbar.getMenu().findItem(R.id.action_add).setVisible(false);
     }
 
+
     @Override
     public void onResume() {
         super.onResume();
         toolbar = listener.getToolbar();
-        toolbar.setVisibility(View.VISIBLE);
+        toolbar.setVisibility(View.GONE);
     }
 
     public static EpisodeDetailsFragment newInstance(Episode episode, Show show) {
@@ -138,7 +148,7 @@ public class EpisodeDetailsFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof ToolbarProvider) {
-            listener = (ToolbarProvider) context;
+                  listener = (ToolbarProvider) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement ToolbarProvider");
