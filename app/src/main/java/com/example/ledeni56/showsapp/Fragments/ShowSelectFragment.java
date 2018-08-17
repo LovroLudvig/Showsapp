@@ -1,7 +1,8 @@
 package com.example.ledeni56.showsapp.Fragments;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -9,10 +10,11 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -20,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.ledeni56.showsapp.Activities.BasicActivity;
 import com.example.ledeni56.showsapp.Activities.LoginActivity;
 import com.example.ledeni56.showsapp.Activities.MainActivity;
 import com.example.ledeni56.showsapp.Adapters.ShowsAdapter;
@@ -36,6 +39,7 @@ import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.R;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import me.everything.android.ui.overscroll.OverScrollDecoratorHelper;
@@ -51,56 +55,117 @@ public class ShowSelectFragment extends Fragment {
     private FragmentManager fragmentManager;
     private Toolbar toolbar;
     private ToolbarProvider listener;
-    private ProgressDialog progressDialog;
     private ShowsAppRepository showsAppRepository;
+    private static int flag = 1;
+    private BasicActivity activity;
+    private FloatingActionButton floatingActionButton;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_show_select,container,false);
+        return inflater.inflate(R.layout.fragment_show_select, container, false);
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = view.findViewById(R.id.ShowRecyclerView);
-        shows= ApplicationShows.getShows();
-        fragmentManager=getFragmentManager();
-        if (showsAppRepository==null){
-            showsAppRepository= ShowsAppRepository.get(getActivity());
+        floatingActionButton = view.findViewById(R.id.floatingActionButton);
+        shows = ApplicationShows.getShows();
+
+        fragmentManager = getFragmentManager();
+        if (showsAppRepository == null) {
+            showsAppRepository = ShowsAppRepository.get(getActivity());
         }
+
         setToolbar();
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(),2));
+        initRecycler();
+        initFloatingActionButton();
+
+    }
+
+    private void initFloatingActionButton() {
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                flag = 1 - flag;
+                makeChangesToFloatingActionButton(floatingActionButton);
+            }
+        });
+        makeChangesToFloatingActionButton(floatingActionButton);
+    }
+
+    private void initRecycler() {
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
         OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
-        recyclerView.setAdapter(new ShowsAdapter(shows, new OnShowFragmentInteractionListener() {
+        recyclerView.setAdapter(new ShowsAdapter(shows, 1, new OnShowFragmentInteractionListener() {
             @Override
             public void onShowSelected(final String showId) {
                 if (fragmentManager.getBackStackEntryCount() > 1) {
                     fragmentManager.popBackStack();
                 }
-                if(isInternetAvailable()){
+                if (isInternetAvailable()) {
                     loadFromApi(showId);
-                }else{
+                } else {
                     getFromDB(showId);
                 }
 
-
             }
         }));
+    }
+
+    private void makeChangesToFloatingActionButton(FloatingActionButton floatingActionButton) {
+        if (flag == 1) {
+            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+            OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            recyclerView.setAdapter(new ShowsAdapter(shows, 1, new OnShowFragmentInteractionListener() {
+                @Override
+                public void onShowSelected(final String showId) {
+                    if (fragmentManager.getBackStackEntryCount() > 1) {
+                        fragmentManager.popBackStack();
+                    }
+                    if (isInternetAvailable()) {
+                        loadFromApi(showId);
+                    } else {
+                        getFromDB(showId);
+                    }
+                }
+            }));
+            floatingActionButton.setImageResource(R.drawable.ic_list_view);
+        } else {
+            recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            OverScrollDecoratorHelper.setUpOverScroll(recyclerView, OverScrollDecoratorHelper.ORIENTATION_VERTICAL);
+            recyclerView.setAdapter(new ShowsAdapter(shows, 0, new OnShowFragmentInteractionListener() {
+                @Override
+                public void onShowSelected(final String showId) {
+                    if (fragmentManager.getBackStackEntryCount() > 1) {
+                        fragmentManager.popBackStack();
+                    }
+                    if (isInternetAvailable()) {
+                        loadFromApi(showId);
+                    } else {
+                        getFromDB(showId);
+                    }
+
+
+                }
+            }));
+            floatingActionButton.setImageResource(R.drawable.ic_grid_view);
+        }
     }
 
     private void getFromDB(final String showId) {
         showsAppRepository.getShows(new DatabaseCallback<List<Show>>() {
             @Override
             public void onSuccess(List<Show> data) {
-                for (Show databaseShow:data){
+                for (Show databaseShow : data) {
                     ApplicationShows.addShow(databaseShow);
                 }
                 showsAppRepository.getEpisodes(new DatabaseCallback<List<Episode>>() {
                     @Override
                     public void onSuccess(List<Episode> data) {
-                        for (Episode ep:data){
-                            ApplicationShows.addEpisodeToShow(ep,ep.getOwnerId());
+                        for (Episode ep : data) {
+                            ApplicationShows.addEpisodeToShow(ep, ep.getOwnerId());
                         }
                         EpisodeSelectFragment episodeSelectFragment = EpisodeSelectFragment.newInstance(showId);
                         fragmentManager.beginTransaction().setCustomAnimations(R.anim.enter, R.anim.exit, R.anim.enter, R.anim.exit).replace(R.id.frameLayoutRight, episodeSelectFragment).addToBackStack("episode").commit();
@@ -108,19 +173,19 @@ public class ShowSelectFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable t) {
-                        showError("Unknown Error");
+                        activity.showError("Unknown Error");
                     }
                 });
             }
 
             @Override
             public void onError(Throwable t) {
-                showError("Unknown Error");
+                activity.showError("Unknown Error");
             }
         });
     }
 
-    private void insertIntoDb(final String showId){
+    private void insertIntoDb(final String showId) {
         showsAppRepository.insertShows(ApplicationShows.getShows(), new DatabaseCallback<Void>() {
             @Override
             public void onSuccess(Void data) {
@@ -133,89 +198,87 @@ public class ShowSelectFragment extends Fragment {
 
                     @Override
                     public void onError(Throwable t) {
-                        showError("Unknown Error");
+                        activity.showError("Unknown Error");
                     }
                 });
             }
 
             @Override
             public void onError(Throwable t) {
-                showError("Unknown Error");
+                activity.showError("Unknown Error");
             }
         });
 
     }
-    private void loadFromApi(final String showId){
-        showProgress();
+
+    private void loadFromApi(final String showId) {
+        activity.showProgress();
         ApiServiceFactory.get().getShows(showId).enqueue(new Callback<ResponseData<ApiShowDescription>>() {
             @Override
             public void onResponse(Call<ResponseData<ApiShowDescription>> call, Response<ResponseData<ApiShowDescription>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     ApplicationShows.getShow(showId).setDescription(response.body().getData().getDescription());
+                    ApplicationShows.getShow(showId).setLikesCount(response.body().getData().getLikesCOunt());
                     ApiServiceFactory.get().getEpisodes(showId).enqueue(new Callback<ResponseData<List<ApiEpisode>>>() {
                         @Override
                         public void onResponse(Call<ResponseData<List<ApiEpisode>>> call, Response<ResponseData<List<ApiEpisode>>> response) {
-                            if(response.isSuccessful()){
-                                hideProgress();
+                            if (response.isSuccessful()) {
+                                activity.hideProgress();
                                 List<ApiEpisode> listEpisodes = response.body().getData();
                                 for (ApiEpisode episode : listEpisodes) {
                                     if (episodeCorrect(episode)) {
-                                        ApplicationShows.addEpisodeToShow(new Episode(episode.getId(),showId, episode.getName(), episode.getDescription(), episode.getEpisodeNumber(), episode.getSeasonNumber(), episode.getPicture()), showId);
+                                        ApplicationShows.addEpisodeToShow(new Episode(episode.getId(), showId, episode.getName(), episode.getDescription(), episode.getEpisodeNumber(), episode.getSeasonNumber(), episode.getPicture()), showId);
                                     }
                                 }
+                                Collections.sort(ApplicationShows.getShow(showId).getEpisodes());
                                 insertIntoDb(showId);
-                            }else{
-                                hideProgress();
-                                showError("Unknown error");
+                            } else {
+                                activity.hideProgress();
+                                activity.showError("Unknown error");
                             }
                         }
 
                         @Override
                         public void onFailure(Call<ResponseData<List<ApiEpisode>>> call, Throwable t) {
-                            hideProgress();
-                            showError("Unknown error");
+                            activity.hideProgress();
+                            activity.showError("Unknown error");
 
                         }
                     });
-                }else{
-                    hideProgress();
-                    showError("Unknown error");
+                } else {
+                    activity.hideProgress();
+                    activity.showError("Unknown error");
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData<ApiShowDescription>> call, Throwable t) {
-                hideProgress();
-                showError("Unknown error");
+                activity.hideProgress();
+                activity.showError("Unknown error");
 
             }
         });
     }
 
     private boolean episodeCorrect(ApiEpisode episode) {
-        if (!episode.getDescription().equals("") && !episode.getName().equals("") && !episode.getId().equals("") && !episode.getPicture().equals("")){
-            try{
-                Integer.valueOf(episode.getEpisodeNumber());
-                Integer.valueOf(episode.getSeasonNumber());
-                return true;
-            }catch (Exception e){
+        if (!episode.getDescription().equals("") && !episode.getName().equals("") && !episode.getId().equals("") && !episode.getPicture().equals("")) {
+            try {
+                int episodeNo = Integer.valueOf(episode.getEpisodeNumber());
+                int seasonNo = Integer.valueOf(episode.getSeasonNumber());
+                if (1 <= episodeNo && episodeNo <= 99 && 1 <= seasonNo && seasonNo <= 20) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
                 return false;
             }
         }
         return false;
     }
 
-    protected void showError(String text) {
-        new AlertDialog.Builder(getActivity())
-                .setTitle("Error!")
-                .setMessage(text)
-                .setPositiveButton("OK", null)
-                .create()
-                .show();
-    }
-
     private void setToolbar() {
-        toolbar=listener.getToolbar();
+        toolbar = listener.getToolbar();
         toolbar.setVisibility(View.VISIBLE);
         toolbar.getMenu().clear();
         toolbar.inflateMenu(R.menu.menu_show);
@@ -227,12 +290,27 @@ public class ShowSelectFragment extends Fragment {
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.action_logout:
-                        SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, getActivity().MODE_PRIVATE).edit();
-                        editor.putString(MainActivity.TOKEN_KEY, null);
-                        editor.commit();
-                        Intent i=new Intent(getActivity(), LoginActivity.class);
-                        startActivity(i);
-                        getActivity().finish();
+                        final AlertDialog alertDialog = new AlertDialog.Builder(getContext()).create();
+                        alertDialog.setTitle("Log out");
+                        alertDialog.setMessage("Are you sure you want to log out?");
+                        alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        SharedPreferences.Editor editor = getActivity().getSharedPreferences(MainActivity.PREFS_NAME, getActivity().MODE_PRIVATE).edit();
+                                        editor.putString(MainActivity.TOKEN_KEY, null);
+                                        editor.commit();
+                                        Intent i = new Intent(getActivity(), LoginActivity.class);
+                                        startActivity(i);
+                                        getActivity().finish();
+                                    }
+                                });
+                        alertDialog.setButton(AlertDialog.BUTTON_NEGATIVE, "No",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
                     default:
                         return false;
                 }
@@ -272,15 +350,7 @@ public class ShowSelectFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement ToolbarProvider");
         }
-    }
-    private void showProgress() {
-        progressDialog = ProgressDialog.show(getActivity(), "Please wait", "Loading...", true, false);
-    }
-
-    private void hideProgress() {
-        if (progressDialog != null) {
-            progressDialog.dismiss();
-        }
+        activity = (BasicActivity) context;
     }
 
     public interface OnShowFragmentInteractionListener {

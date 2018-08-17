@@ -20,7 +20,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class RegisterActivity extends BasicActivity {
-    public static final String EMAIL_STRING="email string";
+    public static final String EMAIL_STRING = "email string";
 
     private TextInputLayout emailWrapper;
     private TextInputLayout passwordWrapper;
@@ -28,16 +28,15 @@ public class RegisterActivity extends BasicActivity {
     private TextInputLayout confirmPasswordWrapper;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register_screen);
 
-        emailWrapper=findViewById(R.id.emailWrapper);
-        passwordWrapper=findViewById(R.id.passwordWrapper);
-        confirmPasswordWrapper=findViewById(R.id.confirmPasswordWrapper);
-        registerButton=findViewById(R.id.registerButton);
+        emailWrapper = findViewById(R.id.emailWrapper);
+        passwordWrapper = findViewById(R.id.passwordWrapper);
+        confirmPasswordWrapper = findViewById(R.id.confirmPasswordWrapper);
+        registerButton = findViewById(R.id.registerButton);
 
         setToolbar();
 
@@ -51,7 +50,7 @@ public class RegisterActivity extends BasicActivity {
                 String otherPassword = confirmPasswordWrapper.getEditText().getText().toString();
                 if (!InputValidations.validateEmail(email)) {
                     emailWrapper.setError("Not a valid email address!");
-                } else{
+                } else {
                     emailWrapper.setErrorEnabled(false);
                 }
                 if (!InputValidations.validatePassword(password)) {
@@ -59,26 +58,26 @@ public class RegisterActivity extends BasicActivity {
                 } else {
                     passwordWrapper.setErrorEnabled(false);
                 }
-                if(!InputValidations.validatePasswordsMatch(password, otherPassword)){
+                if (!InputValidations.validatePasswordsMatch(password, otherPassword)) {
                     confirmPasswordWrapper.setError("Passwords must mach!");
-                }else{
+                } else {
                     confirmPasswordWrapper.setErrorEnabled(false);
                 }
-                if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password) && InputValidations.validatePasswordsMatch(password,otherPassword)){
+                if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password) && InputValidations.validatePasswordsMatch(password, otherPassword)) {
 
                     showProgress();
-                    ApiServiceFactory.get().register(new UserLogin(email,password)).enqueue(new Callback<ResponseRegister>() {
+                    ApiServiceFactory.get().register(new UserLogin(email, password)).enqueue(new Callback<ResponseRegister>() {
                         @Override
                         public void onResponse(Call<ResponseRegister> call, Response<ResponseRegister> response) {
                             hideProgress();
-                            if (response.isSuccessful()){
-                                if (response.code()==200){
+                            if (response.isSuccessful()) {
+                                if (response.code() == 200) {
                                     showError("Email already exists.");
-                                }else{
+                                } else {
                                     finishMyActivity();
                                 }
 
-                            } else{
+                            } else {
                                 showError("Please check your internet connection.");
                             }
                         }
@@ -96,13 +95,13 @@ public class RegisterActivity extends BasicActivity {
 
     private void finishMyActivity() {
         Intent returnIntent = new Intent();
-        returnIntent.putExtra(EMAIL_STRING,emailWrapper.getEditText().getText().toString());
-        setResult(Activity.RESULT_OK,returnIntent);
+        returnIntent.putExtra(EMAIL_STRING, emailWrapper.getEditText().getText().toString());
+        setResult(Activity.RESULT_OK, returnIntent);
         finish();
     }
 
     private void setToolbar() {
-        Toolbar toolbar=findViewById(R.id.registerToolbar);
+        Toolbar toolbar = findViewById(R.id.registerToolbar);
         toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_register_24dp);
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

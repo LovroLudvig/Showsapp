@@ -1,26 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFF7F9">
+    android:background="#FFF7F9"
+    android:orientation="vertical">
 
 
     <ScrollView
-
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_weight="1">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:orientation="vertical"
-            android:gravity="center">
+            android:padding="15dp">
 
             <RelativeLayout
                 android:id="@+id/addPhotoLayout"
@@ -32,83 +28,105 @@
                     android:id="@+id/episodeImage"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
-                    android:scaleType="centerCrop"
-                    android:layout_centerInParent="true"/>
+                    android:layout_centerInParent="true"
+                    android:scaleType="centerCrop" />
 
                 <ImageView
                     android:id="@+id/addPhotoIcon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
                     android:scaleType="centerCrop"
-                    android:src="@drawable/ic_add_a_photo_black_24dp"
-                    android:layout_centerInParent="true"/>
+                    android:src="@drawable/ic_photo" />
 
                 <TextView
                     android:id="@+id/addPhotoText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="add photo"
                     android:layout_centerInParent="true"
-                    android:paddingTop="40dp"
-                    android:textColor="@color/colorPrimary"/>
+                    android:paddingTop="60dp"
+                    android:text="Upload photo"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp" />
 
             </RelativeLayout>
 
 
-            <EditText
-                android:id="@+id/episodeName"
-                android:layout_width="200dp"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Title"
-                android:inputType="textCapWords"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="10dp"/>
+                android:layout_marginBottom="30dp"
+                android:layout_marginTop="20dp">
+
+                <EditText
+                    android:id="@+id/episodeName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:foregroundTint="@color/colorPrimary"
+                    android:hint="Episode title"
+                    android:inputType="textCapSentences"
+                    android:textColor="@color/textRegular"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
+
             <LinearLayout
                 android:id="@+id/episodePicker"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
+
                 <TextView
 
-                    android:layout_width="200dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
                     android:text="Season and Episode"
-                    android:textSize="20dp"
-                    android:textColor="#969696"
-                    android:paddingLeft="5dp"/>
+                    android:textColor="#a0a0a0"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/selectedEpisode"
-                    android:layout_width="200dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="5dp"
                     android:text="Unknown"
-                    android:textSize="15dp"
                     android:textColor="@color/colorPrimary"
-                    android:paddingLeft="5dp"/>
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
-
-            <EditText
-                android:id="@+id/episodeDescription"
-                android:layout_width="200dp"
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description"
-                android:inputType="textCapWords"/>
-            <Space
-                android:id="@+id/space"
-                android:layout_width="wrap_content"
-                android:layout_height="10pt" />
-            <Button
-                android:id="@+id/saveButton"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:text="Save"
-                android:backgroundTint="@color/colorPrimary"
-                android:textColor="@color/white"/>
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp">
 
+                <EditText
+                    android:id="@+id/episodeDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+
+                    android:foregroundTint="@color/colorPrimary"
+                    android:hint="Episode description"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:textColor="@color/textRegular"
+                    android:textSize="16sp" />
+
+            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
     </ScrollView>
+
+    <TextView
+        android:id="@+id/saveButton"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="SAVE"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
 
 </LinearLayout>
 

@@ -1,56 +1,120 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFF7F9">
+    android:background="#FFF7F9"
+    android:orientation="vertical">
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp">
 
         <ImageView
             android:id="@+id/episodePicture"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"/>
-        <ScrollView
-            android:id="@+id/scrollView"
+            android:layout_height="250dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@drawable/picture_gradient"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:src="@drawable/ic_shortcut_arrow_back"/>
+    </FrameLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:padding="40dp">
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:paddingTop="5dp">
+
             <TextView
                 android:id="@+id/episodeTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:textSize="40dp"
-                tools:text="test"
-                android:textStyle="bold"
-                android:paddingLeft="5dp"
-                android:paddingTop="10dp"
-                android:paddingBottom="20dp"/>
-            <TextView
-                android:id="@+id/episodeDescription"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                tools:text="description"
-                android:textSize="20dp"
-                android:padding="5dp"/>
+                android:paddingBottom="20dp"
+
+                android:textColor="@color/textRegular"
+                android:textSize="24sp"
+                tools:text="this is title" />
+
             <TextView
                 android:id="@+id/episodeNumber"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                tools:text="episode 5"
-                android:textSize="30dp"
-                android:textColor="#000"
+                android:textColor="@color/colorPrimary"
+                android:textSize="16sp"
+                tools:text="episode 5" />
+
+            <TextView
+                android:id="@+id/episodeDescription"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:textSize="16sp"
+                tools:text="description" />
+
+            <LinearLayout
+                android:id="@+id/commentsView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ripple_effect"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_comments" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="3dp"
+                    android:text="Comments"
+                    android:textSize="14sp" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/otherEpisodesText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:padding="5dp"/>
+                android:text="Other episodes:"
+                android:textSize="20sp"
+                android:textColor="@color/textRegular"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/fiveEpisodes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingTop="10dp"></android.support.v7.widget.RecyclerView>
+
+
         </LinearLayout>
-        </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
 </LinearLayout>

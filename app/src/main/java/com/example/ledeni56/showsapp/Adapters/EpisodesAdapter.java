@@ -5,29 +5,33 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.ledeni56.showsapp.Entities.Episode;
-import com.example.ledeni56.showsapp.Entities.Show;
 import com.example.ledeni56.showsapp.Fragments.EpisodeSelectFragment;
 import com.example.ledeni56.showsapp.R;
 
-import java.util.List;
+import java.util.ArrayList;
 
-public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder>  {
-    private final List<Episode> episodes;
+public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHolder> {
+    private ArrayList<Episode> episodes;
     private String showName;
-    private Show show;
 
     private EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener;
 
-    public EpisodesAdapter(Show show, EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener) {
-        this.show=show;
-        this.episodes=show.getEpisodes();
-        this.showName=show.getName();
-        this.listener=listener;
+    public EpisodesAdapter(ArrayList<Episode> episodes, int from, int to, String showName, EpisodeSelectFragment.OnEpisodeFragmentInteractionListener listener) {
+        if (from == 0 && to == 0) {
+            this.episodes = episodes;
+        } else {
+            this.episodes = new ArrayList<>();
+            for (int i = from; i < to; i++) {
+                if (i < episodes.size()) {
+                    this.episodes.add(episodes.get(i));
+                }
+            }
+        }
+        this.showName = showName;
+        this.listener = listener;
     }
 
     @NonNull
@@ -40,14 +44,13 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
         TextView titleText = holder.itemView.findViewById(R.id.episodeText);
-        TextView episodeAndSeason= holder.itemView.findViewById(R.id.seasonAndEpisodeText);
-
+        TextView episodeAndSeason = holder.itemView.findViewById(R.id.seasonAndEpisodeText);
 
 
         final Episode episode = episodes.get(position);
 
         titleText.setText(episode.getName());
-        String episodeAndSeasonText=fix("S"+String.valueOf(episode.getSeasonNumber())+" Ep"+String.valueOf(episode.getEpisodeNumber()));
+        String episodeAndSeasonText = fix("S" + String.valueOf(episode.getSeasonNumber()) + " Ep" + String.valueOf(episode.getEpisodeNumber()));
         episodeAndSeason.setText(episodeAndSeasonText);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -59,8 +62,8 @@ public class EpisodesAdapter extends RecyclerView.Adapter<EpisodesAdapter.ViewHo
     }
 
     private String fix(String s) {
-        while(s.length()<8){
-            s=s+" ";
+        while (s.length() < 8) {
+            s = s + " ";
         }
         return s;
     }

@@ -43,24 +43,24 @@ public class LoginActivity extends BasicActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences sharedPreferences=getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
-        if (sharedPreferences.getString(MainActivity.TOKEN_KEY, null)!=null){
-            Intent i=new Intent(this,MainActivity.class);
+        SharedPreferences sharedPreferences = getSharedPreferences(MainActivity.PREFS_NAME, MODE_PRIVATE);
+        if (sharedPreferences.getString(MainActivity.TOKEN_KEY, null) != null) {
+            Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
         }
 
         setContentView(R.layout.activity_login);
 
-        emailWrapper=findViewById(R.id.emailWrapper);
-        passwordWrapper=findViewById(R.id.passwordWrapper);
-        loginButton=findViewById(R.id.loginButton);
-        createAnAccount=findViewById(R.id.createAnAccount);
+        emailWrapper = findViewById(R.id.emailWrapper);
+        passwordWrapper = findViewById(R.id.passwordWrapper);
+        loginButton = findViewById(R.id.loginButton);
+        createAnAccount = findViewById(R.id.createAnAccount);
 
         createAnAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(LoginActivity.this,RegisterActivity.class);
+                Intent i = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivityForResult(i, RESULT_CODE_EMAIL);
             }
         });
@@ -74,23 +74,24 @@ public class LoginActivity extends BasicActivity {
                 final String password = passwordWrapper.getEditText().getText().toString();
                 if (!InputValidations.validateEmail(email)) {
                     emailWrapper.setError("Not a valid email address!");
-                } else{
+                } else {
                     emailWrapper.setErrorEnabled(false);
-                } if (!InputValidations.validatePassword(password)) {
+                }
+                if (!InputValidations.validatePassword(password)) {
                     passwordWrapper.setError("Password must have at least 5 characters!");
                 } else {
                     passwordWrapper.setErrorEnabled(false);
                 }
-                if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password)){
+                if (InputValidations.validateEmail(email) && InputValidations.validatePassword(password)) {
                     showProgress();
 
-                    ApiServiceFactory.get().login(new UserLogin(email,password)).enqueue(new Callback<ResponseLogin>() {
+                    ApiServiceFactory.get().login(new UserLogin(email, password)).enqueue(new Callback<ResponseLogin>() {
                         @Override
                         public void onResponse(Call<ResponseLogin> call, Response<ResponseLogin> response) {
                             hideProgress();
-                            if (response.isSuccessful()){
+                            if (response.isSuccessful()) {
                                 startMain(response.body().getData().getToken());
-                            } else{
+                            } else {
                                 showError("Have you created an account?\n\nYou can create an account bellow.");
                             }
                         }
@@ -108,16 +109,16 @@ public class LoginActivity extends BasicActivity {
 
 
     private void startMain(String token) {
-        Intent i=new Intent(this,MainActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         i.putExtra(SENDING_TOKEN_KEY, token);
-        i.putExtra(REMEMBER_KEY, ((CheckBox)findViewById(R.id.checkBox)).isChecked());
+        i.putExtra(REMEMBER_KEY, ((CheckBox) findViewById(R.id.checkBox)).isChecked());
         startActivity(i);
         finish();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode==RESULT_CODE_EMAIL && resultCode== Activity.RESULT_OK){
+        if (requestCode == RESULT_CODE_EMAIL && resultCode == Activity.RESULT_OK) {
             emailWrapper.getEditText().setText(data.getExtras().getString(RegisterActivity.EMAIL_STRING));
             passwordWrapper.getEditText().setText("");
         }

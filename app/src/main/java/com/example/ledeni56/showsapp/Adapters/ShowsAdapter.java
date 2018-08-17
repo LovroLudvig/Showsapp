@@ -22,16 +22,23 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
 
     private final List<Show> shows;
     private ShowSelectFragment.OnShowFragmentInteractionListener listener;
+    private int flag;
 
-    public ShowsAdapter(List<Show> shows, ShowSelectFragment.OnShowFragmentInteractionListener listener) {
-            this.shows = shows;
-            this.listener=listener;
-        }
+    public ShowsAdapter(List<Show> shows, int i, ShowSelectFragment.OnShowFragmentInteractionListener listener) {
+        this.shows = shows;
+        this.listener = listener;
+        this.flag = i;
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows_grid, parent, false);
+        View view;
+        if (flag == 1) {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows_grid, parent, false);
+        } else {
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shows, parent, false);
+        }
         return new ViewHolder(view);
     }
 
@@ -42,9 +49,8 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
 
 
         final Show show = shows.get(position);
-        final Context context=holder.itemView.getContext();
+        final Context context = holder.itemView.getContext();
 
-      
 
         textView.setText(show.getName());
         Glide.with(context).load(Uri.parse(show.getPictureUrl())).into(imageView);
@@ -53,14 +59,14 @@ public class ShowsAdapter extends RecyclerView.Adapter<ShowsAdapter.ViewHolder> 
             @Override
             public void onClick(View v) {
                 listener.onShowSelected(show.getId());
-                }
-            });
-        }
+            }
+        });
+    }
 
     @Override
     public int getItemCount() {
-            return shows.size();
-        }
+        return shows.size();
+    }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
 

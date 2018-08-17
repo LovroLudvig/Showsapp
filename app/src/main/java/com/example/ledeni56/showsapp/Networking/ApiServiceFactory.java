@@ -11,9 +11,9 @@ public class ApiServiceFactory {
     private static final String BASE_URL = "https://api.infinum.academy";
     private static ApiService apiService;
 
-    public static ApiService get(){
-        if (apiService==null){
-            apiService=initApiService();
+    public static ApiService get() {
+        if (apiService == null) {
+            apiService = initApiService();
         }
         return apiService;
     }

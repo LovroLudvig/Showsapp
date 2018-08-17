@@ -39,11 +39,11 @@ public class LoadingScreenActivity extends BasicActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_loading_screen);
 
-        imageView=findViewById(R.id.logoImage);
-        textView=findViewById(R.id.showText);
+        imageView = findViewById(R.id.logoImage);
+        textView = findViewById(R.id.showText);
 
-        if (showsAppRepository==null){
-            showsAppRepository=ShowsAppRepository.get(this);
+        if (showsAppRepository == null) {
+            showsAppRepository = ShowsAppRepository.get(this);
         }
 
         final ObjectAnimator textAnimator = ObjectAnimator.ofFloat(textView, "textSize", 50);
@@ -53,9 +53,9 @@ public class LoadingScreenActivity extends BasicActivity {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                if (isInternetAvailable()){
+                if (isInternetAvailable()) {
                     loadShowsFromApi();
-                }else{
+                } else {
                     getShowsDb();
                 }
 
@@ -65,7 +65,7 @@ public class LoadingScreenActivity extends BasicActivity {
 
 
         ObjectAnimator animator = ObjectAnimator.ofFloat(imageView, "translationY",
-                0f, Resources.getSystem().getDisplayMetrics().heightPixels/2);
+                0f, Resources.getSystem().getDisplayMetrics().heightPixels / 2);
         animator.setDuration(2000);
         animator.setInterpolator(new BounceInterpolator());
         animator.addListener(new AnimatorListenerAdapter() {
@@ -84,12 +84,12 @@ public class LoadingScreenActivity extends BasicActivity {
         showsAppRepository.getShows(new DatabaseCallback<List<Show>>() {
             @Override
             public void onSuccess(List<Show> data) {
-                for (Show databaseShow:data){
+                for (Show databaseShow : data) {
                     ApplicationShows.addShow(databaseShow);
                 }
-                if (ApplicationShows.getShows().size()==0){
+                if (ApplicationShows.getShows().size() == 0) {
                     loadingScreenError();
-                }else{
+                } else {
                     continueCreate();
                 }
             }
@@ -110,22 +110,24 @@ public class LoadingScreenActivity extends BasicActivity {
 
             @Override
             public void onError(Throwable t) {
-
+                showError("Unknown error. Please exit application and try again.");
             }
         });
     }
 
-    private void loadShowsFromApi(){
+    private void loadShowsFromApi() {
         ApiServiceFactory.get().getShowIds().enqueue(new Callback<ResponseData<List<ApiShowId>>>() {
             @Override
             public void onResponse(Call<ResponseData<List<ApiShowId>>> call, Response<ResponseData<List<ApiShowId>>> response) {
                 if (response.isSuccessful()) {
                     List<ApiShowId> showIdList = response.body().getData();
-                    for (ApiShowId apiShowId:showIdList){
-                        ApplicationShows.addShow(new Show(apiShowId.getId(),apiShowId.getName(),"",apiShowId.getPictureUrl()));
+                    for (ApiShowId apiShowId : showIdList) {
+                        if (!apiShowId.getPictureUrl().equals("")) {
+                            ApplicationShows.addShow(new Show(apiShowId.getId(), apiShowId.getName(), "", apiShowId.getPictureUrl(), apiShowId.getLikesCount()));
+                        }
                     }
                     insertShowsDb();
-                }else{
+                } else {
                     showError("Unknown error. Please exit application and try again.");
                 }
             }
@@ -138,9 +140,8 @@ public class LoadingScreenActivity extends BasicActivity {
     }
 
 
-
     private void continueCreate() {
-        Intent i=new Intent(this,LoginActivity.class);
+        Intent i = new Intent(this, LoginActivity.class);
         startActivity(i);
         finish();
     }

@@ -5,8 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFF7F9">
+    android:background="#FFF7F9"
+    android:orientation="vertical">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/Toolbar"
@@ -16,10 +16,11 @@
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         app:title="@string/main_title"
-        app:titleTextAppearance="@style/Toolbar.TitleText"
-        />
-        <FrameLayout
-            android:id ="@+id/frameLayoutRight"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"></FrameLayout>
+        app:titleTextColor="@color/textRegular"
+        app:titleTextAppearance="@style/Toolbar.TitleText" />
+
+    <FrameLayout
+        android:id="@+id/frameLayoutRight"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></FrameLayout>
 </LinearLayout>

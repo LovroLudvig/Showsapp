@@ -1,106 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#FFF7F9"
     android:fillViewport="true"
-    android:overScrollMode="never"
-    android:background="#FFF7F9">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.ledeni56.showsapp.Activities.RegisterActivity"
-    android:orientation="vertical"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    >
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/registerToolbar"
+    android:overScrollMode="never">
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="#FFF7F9"
-        app:title="Register"
-        app:titleTextColor="#000"/>
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/emailWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:errorTextAppearance="@style/error_appearance"
-        android:paddingTop="30dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        >
-        <EditText
-            android:id="@+id/email"
+        android:layout_height="match_parent"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        tools:context="com.example.ledeni56.showsapp.Activities.RegisterActivity">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/registerToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#FFF7F9"
+            app:title="Register"
+            app:titleTextColor="#000" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/emailWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress"
-            android:hint="Email"
-            android:backgroundTint="@color/colorPrimary"
-            android:foregroundTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"/>
-    </android.support.design.widget.TextInputLayout>
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="30dp"
+            app:errorTextAppearance="@style/error_appearance">
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/passwordWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:errorTextAppearance="@style/error_appearance"
-        android:paddingTop="30dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        >
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/colorPrimary"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/textRegular"
+                android:textColorHint="@color/colorPrimary"
+                android:textSize="16sp" />
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/password"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/passwordWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="Password"
-            android:backgroundTint="@color/colorPrimary"
-            android:foregroundTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"/>
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="30dp"
+            app:errorTextAppearance="@style/error_appearance">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/colorPrimary"
+                android:hint="Password"
+                android:inputType="textPassword"
+                android:textColor="@color/textRegular"
+                android:textColorHint="@color/colorPrimary"
+                android:textSize="16sp" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/confirmPasswordWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:errorTextAppearance="@style/error_appearance"
-        android:paddingTop="30dp"
-        android:paddingLeft="30dp"
-        android:paddingRight="30dp"
-        >
+        </android.support.design.widget.TextInputLayout>
 
-        <EditText
-            android:id="@+id/confirmPassword"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/confirmPasswordWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword"
-            android:hint="Confirm password"
-            android:backgroundTint="@color/colorPrimary"
-            android:foregroundTint="@color/colorPrimary"
-            android:textColorHint="@color/colorPrimary"/>
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
+            android:paddingTop="30dp"
+            app:errorTextAppearance="@style/error_appearance">
 
-    </android.support.design.widget.TextInputLayout>
+            <EditText
+                android:id="@+id/confirmPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foregroundTint="@color/colorPrimary"
+                android:hint="Confirm password"
+                android:inputType="textPassword"
+                android:textColor="@color/textRegular"
+                android:textColorHint="@color/colorPrimary"
+                android:textSize="16sp" />
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:background="@color/colorPrimary"
-        android:text="Register"
-        android:textStyle="bold"
-        android:textSize="15dp"
-        android:layout_marginRight="30dp"
-        android:layout_marginLeft="30dp"
-        android:layout_marginTop="50dp"
-        />
+        </android.support.design.widget.TextInputLayout>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/registerButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginTop="50dp"
+            android:background="@color/colorPrimary"
+            android:text="Register"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
 </ScrollView>
 

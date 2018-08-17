@@ -17,7 +17,7 @@ import com.example.ledeni56.showsapp.Networking.ApiEpisode;
 public class BasicActivity extends AppCompatActivity {
     private static ProgressDialog progressDialog;
 
-    protected void hideKeyboard() {
+    public void hideKeyboard() {
         View view = getCurrentFocus();
         if (view != null) {
             ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).
@@ -25,7 +25,15 @@ public class BasicActivity extends AppCompatActivity {
         }
     }
 
-    protected void showError(String text) {
+    public void showKeyboard(){
+        View view = getCurrentFocus();
+        if (view!=null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0);
+        }
+    }
+
+    public void showError(String text) {
         new AlertDialog.Builder(this)
                 .setTitle("Error!")
                 .setMessage(text)
@@ -33,13 +41,14 @@ public class BasicActivity extends AppCompatActivity {
                 .create()
                 .show();
     }
-    protected void hideProgress() {
+
+    public void hideProgress() {
         if (progressDialog != null) {
             progressDialog.dismiss();
         }
     }
 
-    protected void loadingScreenError(){
+    public void loadingScreenError() {
         new AlertDialog.Builder(this)
                 .setTitle("Error!")
                 .setMessage("Please turn on your internet connection when you open the app for the first time.")
@@ -54,11 +63,11 @@ public class BasicActivity extends AppCompatActivity {
                 .show();
     }
 
-    protected void showProgress() {
+    public void showProgress() {
         progressDialog = ProgressDialog.show(this, "Please wait", "Loading...", true, false);
     }
 
-    protected boolean isInternetAvailable() {
+    public boolean isInternetAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivityManager == null) {
             return false;
@@ -67,7 +76,6 @@ public class BasicActivity extends AppCompatActivity {
         NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
         return networkInfo != null && networkInfo.isConnected();
     }
-
 
 
 }
