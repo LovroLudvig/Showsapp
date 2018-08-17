@@ -79,7 +79,7 @@ public class AddEpisodeFragment extends Fragment {
     private EditText episodeNameView;
     private EditText episodeDescriptionView;
     private TextView selectedEpisodeText;
-    private Button saveButton;
+    private TextView saveButton;
     private RelativeLayout addPhotoLayout;
     private ImageView episodePhoto;
     private ImageView addPhotoIcon;
@@ -87,8 +87,8 @@ public class AddEpisodeFragment extends Fragment {
     private View episodePicker;
 
     private Episode addedEpisode;
-    private int episodeNumber;
-    private int seasonNumber;
+    private int episodeNumber=1;
+    private int seasonNumber=1;
     private ToolbarProvider listener;
     private Toolbar toolbar;
     private BasicActivity activity;
@@ -144,9 +144,11 @@ public class AddEpisodeFragment extends Fragment {
 
                 seasonPicker.setMinValue(1);
                 seasonPicker.setMaxValue(20);
+                seasonPicker.setValue(seasonNumber);
 
                 episodePicker.setMaxValue(99);
                 episodePicker.setMinValue(1);
+                episodePicker.setValue(episodeNumber);
 
                 episodePicker.setWrapSelectorWheel(false);
                 seasonPicker.setWrapSelectorWheel(false);

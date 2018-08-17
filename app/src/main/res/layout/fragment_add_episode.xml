@@ -117,12 +117,13 @@
         </LinearLayout>
     </ScrollView>
 
-    <Button
+    <TextView
         android:id="@+id/saveButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="@color/colorPrimary"
-        android:text="Save"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="SAVE"
         android:textColor="@color/white"
         android:textSize="16sp" />
 
